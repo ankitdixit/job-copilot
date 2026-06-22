@@ -1,0 +1,12 @@
+[Unit]
+Description=Job Copilot Health Check
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/path/to/job-copilot/.venv/bin/python3 /path/to/job-copilot/tools/health_check.py
+StandardOutput=append:/path/to/job-copilot/health_check.log
+StandardError=append:/path/to/job-copilot/health_check.log
+
+[Install]
+WantedBy=default.target

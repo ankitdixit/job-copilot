@@ -1,0 +1,9 @@
+[Unit]
+Description=Run Job Copilot health check every 2 hours
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=2h
+
+[Install]
+WantedBy=timers.target
