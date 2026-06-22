@@ -4,6 +4,25 @@ An AI-assisted job search framework built for senior engineers. Seed it with tar
 
 ---
 
+## How it works
+
+```mermaid
+%%{init: {'theme': 'dark'}}%%
+flowchart LR
+    A([🎯 Target company]) --> B[Browser agent\nfinds contact + open roles]
+    B --> C[Draft outreach email]
+    C --> D{You review\nand approve}
+    D -->|Yes| E[Gmail API sends]
+    D -->|Edit| C
+    E --> F[pipeline.md updated]
+    F --> G[Dashboard shows stage]
+    G --> H{Reply received?}
+    H -->|Yes| I[Advance stage\nSchedule interview]
+    H -->|No after 7d| J[Follow-up flagged]
+    J --> D
+    I --> K([🎉 Interview])
+```
+
 ## What this is
 
 Job searching at senior/staff level is a full-time job: tracking 20+ companies, writing personalised outreach, following up at the right time, keeping notes on every conversation. This project automates the mechanical parts using AI so you can focus on the parts that actually matter — preparation and conversation.
@@ -21,6 +40,10 @@ You add a target company
 
 ---
 
+## Dashboard preview
+
+Open [`dashboard/demo.html`](dashboard/demo.html) in your browser to see a live demo with sample data — no setup needed.
+
 ## What's working today (v0.1)
 
 | Feature | Status | Details |
@@ -29,8 +52,10 @@ You add a target company
 | Gmail outreach | ✅ | Sends via your Gmail account (OAuth2, no password stored) |
 | Pipeline tracker | ✅ | `pipeline.md` — one row per company, plain markdown |
 | Health monitoring | ✅ | Checks Gmail token validity and automation health every 2h |
-| Dashboard | ✅ | HTML file, opens locally — visual pipeline status |
+| Dashboard | ✅ | HTML file, opens locally — visual pipeline by stage |
 | Background automation | ✅ | LaunchAgent (macOS) / systemd (Linux) for periodic checks |
+| Interview debrief | ✅ | Reads meeting transcripts, creates structured debrief notes, updates pipeline |
+| Prep notes + cheat sheets | ✅ | Per-company prep folders, topic cheat sheets, gap tracker |
 
 ## Planned
 
@@ -38,6 +63,7 @@ You add a target company
 |---------|--------|
 | Auto job discovery | v0.2 — periodic scan of target company career pages |
 | Follow-up automation | v0.2 — flag stale outreach, draft follow-ups |
+| Standalone prep module | v0.3 — extract from Obsidian vault into portable format |
 | Cloud deployment | v0.3 — Dockerfile + setup guide, run on a €4/mo VPS |
 | Application assist | v0.3 — navigate to job application, hand off to Simplify/autofill |
 
@@ -196,6 +222,30 @@ LLM_API_KEY=sk-your-key-here
 ```
 
 ---
+
+## Interview prep integration
+
+Job Copilot is designed to work alongside your note-taking and prep workflow, not replace it. The pipeline is the connective tissue:
+
+**After every interview:**
+- Drop the transcript (e.g. from [Snaply](https://snaply.app) or any meeting recorder) into `transcripts/`
+- The debrief script reads it, classifies the call, and creates a structured debrief note with: questions asked, what went well, what went badly, gaps surfaced, and next tasks
+- `pipeline.md` advances to the next stage automatically
+
+**Prep materials:**
+- Each company in the pipeline links to a prep folder: system design notes, behavioural stories, cheat sheets
+- Cheat sheets are one-page quick references for a topic (e.g. "consistent hashing", "distributed transactions") — generated from your notes + standard references
+- Gaps flagged in debriefs get added to a `gaps.md` backlog with severity and a fix plan
+
+**The transcript flow (works today with an Obsidian vault):**
+```
+Interview ends
+  → Snaply exports markdown transcript to transcripts/
+  → Run: ingest-meeting
+  → Debrief note created, pipeline updated, prep tasks added
+```
+
+This part is currently tightly coupled to an Obsidian vault. Extracting it into a standalone module is on the v0.3 roadmap.
 
 ## Design principles
 

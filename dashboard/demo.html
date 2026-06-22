@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Job Copilot — Pipeline Demo</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #e0e0e0; padding: 2rem; }
+  h1 { font-size: 1.4rem; font-weight: 600; color: #fff; margin-bottom: 0.25rem; }
+  .subtitle { font-size: 0.85rem; color: #666; margin-bottom: 0.5rem; }
+  .demo-badge { display: inline-block; background: #e8a838; color: #000; font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 4px; margin-bottom: 2rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .stages { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+  .stage-col { flex: 1; min-width: 160px; background: #1a1d24; border-radius: 8px; padding: 1rem; }
+  .stage-col h2 { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #888; margin-bottom: 0.75rem; }
+  .card { background: #22262f; border-radius: 6px; padding: 0.75rem; margin-bottom: 0.5rem; border-left: 3px solid #444; }
+  .card.target      { border-left-color: #555; }
+  .card.outreach    { border-left-color: #4a9eca; }
+  .card.replied     { border-left-color: #e8a838; }
+  .card.screening   { border-left-color: #a78bfa; }
+  .card.interviewing { border-left-color: #5bba6f; }
+  .card.offer       { border-left-color: #22c55e; }
+  .card.closed      { border-left-color: #444; opacity: 0.45; }
+  .card .company    { font-size: 0.9rem; font-weight: 600; color: #fff; }
+  .card .role       { font-size: 0.75rem; color: #888; margin-top: 0.15rem; }
+  .card .meta       { font-size: 0.7rem; color: #666; margin-top: 0.4rem; }
+  .days             { float: right; font-size: 0.7rem; color: #666; }
+  .days.stale       { color: #e8a838; }
+  .days.urgent      { color: #f87171; }
+  .stats { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+  .stat { background: #1a1d24; border-radius: 8px; padding: 1rem 1.5rem; }
+  .stat .num { font-size: 1.8rem; font-weight: 700; color: #fff; }
+  .stat .label { font-size: 0.75rem; color: #666; margin-top: 0.1rem; }
+  .empty { font-size: 0.8rem; color: #444; font-style: italic; }
+</style>
+</head>
+<body>
+
+<h1>Job Copilot</h1>
+<p class="subtitle">Pipeline dashboard</p>
+<span class="demo-badge">Demo — sample data</span>
+
+<div class="stats">
+  <div class="stat"><div class="num">9</div><div class="label">Active</div></div>
+  <div class="stat"><div class="num">3</div><div class="label">Awaiting reply</div></div>
+  <div class="stat"><div class="num">2</div><div class="label">Interviewing</div></div>
+  <div class="stat"><div class="num">1</div><div class="label">Offers</div></div>
+</div>
+
+<div class="stages">
+
+  <div class="stage-col">
+    <h2>Target (2)</h2>
+    <div class="card target">
+      <span class="days">today</span>
+      <div class="company">Mistral AI</div>
+      <div class="role">Staff Infrastructure Engineer</div>
+      <div class="meta">Find eng contact → send outreach</div>
+    </div>
+    <div class="card target">
+      <span class="days">today</span>
+      <div class="company">Cohere</div>
+      <div class="role">Principal Backend Engineer</div>
+      <div class="meta">Check careers page first</div>
+    </div>
+  </div>
+
+  <div class="stage-col">
+    <h2>Outreach Sent (3)</h2>
+    <div class="card outreach">
+      <span class="days stale">9d</span>
+      <div class="company">Poolside</div>
+      <div class="role">Staff Engineer</div>
+      <div class="meta">greg@poolside.ai — follow up soon</div>
+    </div>
+    <div class="card outreach">
+      <span class="days">3d</span>
+      <div class="company">DataPelago</div>
+      <div class="role">Staff Engineer</div>
+      <div class="meta">careers@datapelago.com</div>
+    </div>
+    <div class="card outreach">
+      <span class="days">1d</span>
+      <div class="company">xAI</div>
+      <div class="role">Staff Systems Engineer</div>
+      <div class="meta">via LinkedIn — gunther@x.ai</div>
+    </div>
+  </div>
+
+  <div class="stage-col">
+    <h2>Replied (1)</h2>
+    <div class="card replied">
+      <span class="days">2d</span>
+      <div class="company">Anthropic</div>
+      <div class="role">Staff Engineer, Infrastructure</div>
+      <div class="meta">Book intro call — link sent</div>
+    </div>
+  </div>
+
+  <div class="stage-col">
+    <h2>Screening (1)</h2>
+    <div class="card screening">
+      <span class="days">5d</span>
+      <div class="company">Databricks</div>
+      <div class="role">Staff Software Engineer</div>
+      <div class="meta">Technical screen Thu 2pm</div>
+    </div>
+  </div>
+
+  <div class="stage-col">
+    <h2>Interviewing (2)</h2>
+    <div class="card interviewing">
+      <span class="days">12d</span>
+      <div class="company">Jane Street</div>
+      <div class="role">Software Engineer</div>
+      <div class="meta">Round 3 of 5 — systems design Mon</div>
+    </div>
+    <div class="card interviewing">
+      <span class="days">8d</span>
+      <div class="company">Hudson River Trading</div>
+      <div class="role">Software Engineer</div>
+      <div class="meta">Final round scheduled Fri</div>
+    </div>
+  </div>
+
+  <div class="stage-col">
+    <h2>Offer (1)</h2>
+    <div class="card offer">
+      <span class="days">1d</span>
+      <div class="company">Wiz</div>
+      <div class="role">Staff Engineer</div>
+      <div class="meta">£180k + equity — decision by Fri</div>
+    </div>
+  </div>
+
+  <div class="stage-col">
+    <h2>Closed (1)</h2>
+    <div class="card closed">
+      <span class="days">18d</span>
+      <div class="company">DeepMind</div>
+      <div class="role">Senior Research Engineer</div>
+      <div class="meta">No response after follow-up</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
