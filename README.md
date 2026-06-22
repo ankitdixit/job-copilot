@@ -6,6 +6,10 @@ An AI-assisted job search framework built for senior engineers. Seed it with tar
 
 ## How it works
 
+There are two loops. The outreach loop fills your pipeline. The prep loop raises your interview bar.
+
+**Outreach loop**
+
 ```mermaid
 %%{init: {'theme': 'dark'}}%%
 flowchart LR
@@ -23,11 +27,27 @@ flowchart LR
     I --> K([🎉 Interview])
 ```
 
+**Prep loop — what makes this different from a spreadsheet**
+
+```mermaid
+%%{init: {'theme': 'dark'}}%%
+flowchart LR
+    K([Interview]) --> L[Transcript\nor manual debrief]
+    L --> M[Debrief note:\nwhat was asked\nwhat went well / badly]
+    M --> N[gaps.md:\nnew gaps with\nseverity + evidence]
+    N --> O[Exercise tasks\nspawned in tasks.md]
+    O --> P[Practice session]
+    P --> Q[Prep level updated\nin dashboard]
+    Q --> K
+```
+
+Every interview feeds back into preparation for the next one. The dashboard shows where you are on each topic — not just where you are in each pipeline.
+
 ## What this is
 
-Job searching at senior/staff level is a full-time job: tracking 20+ companies, writing personalised outreach, following up at the right time, keeping notes on every conversation. This project automates the mechanical parts using AI so you can focus on the parts that actually matter — preparation and conversation.
+Job searching at senior/staff level is a full-time job: tracking 20+ companies, writing personalised outreach, following up at the right time, keeping notes on every conversation, figuring out which gaps you revealed in the last round. This project automates the mechanical parts using AI so you can focus on the parts that actually matter — preparation and conversation.
 
-**The core loop:**
+**The outreach loop:**
 
 ```
 You add a target company
@@ -38,11 +58,32 @@ You add a target company
   → Dashboard shows your full pipeline at a glance
 ```
 
+**The prep loop (runs in parallel):**
+
+```
+Interview ends
+  → Drop transcript into transcripts/ (or debrief manually)
+  → Debrief note created: questions asked, what landed, what didn't
+  → gaps.md updated: new gap + severity + evidence from that specific call
+  → Exercise tasks spawned in tasks.md: one concrete fix per gap
+  → Practice fills the gap
+  → Prep level rises — visible in the dashboard chart
+  → Next interview: same pattern, surfacing the next layer
+```
+
 ---
 
 ## Dashboard preview
 
 **[→ Live demo](https://ankitdixit.github.io/job-copilot/dashboard/demo.html)** — sample pipeline with fake data, no setup needed.
+
+The dashboard auto-regenerates from your local files every 6h. It shows:
+- **Goal box** — your comp target and what you'll accept
+- **14-day Gantt** — every interview bar, today marker, weekend shading
+- **Comp vs role fit scatter** — which companies are genuine targets vs practice
+- **Prep level chart** — readiness per topic (HIGH/MED severity, 1–5 scale), updated after each practice session
+- **Stage board** — kanban: Applied → Screening → Interviewing → Final Round → Offer
+- **Pipeline table** — every company, next action, date
 
 ## What's working today (v0.1)
 
@@ -225,27 +266,75 @@ LLM_API_KEY=sk-your-key-here
 
 ## Interview prep integration
 
-Job Copilot is designed to work alongside your note-taking and prep workflow, not replace it. The pipeline is the connective tissue:
+This is the part that separates Job Copilot from a tracker. Every interview generates signal about where your gaps are. The system captures that signal and turns it into preparation.
 
-**After every interview:**
-- Drop the transcript (e.g. from [Snaply](https://snaply.app) or any meeting recorder) into `transcripts/`
-- The debrief script reads it, classifies the call, and creates a structured debrief note with: questions asked, what went well, what went badly, gaps surfaced, and next tasks
-- `pipeline.md` advances to the next stage automatically
+### The gap tracking loop
 
-**Prep materials:**
-- Each company in the pipeline links to a prep folder: system design notes, behavioural stories, cheat sheets
-- Cheat sheets are one-page quick references for a topic (e.g. "consistent hashing", "distributed transactions") — generated from your notes + standard references
-- Gaps flagged in debriefs get added to a `gaps.md` backlog with severity and a fix plan
+**Step 1 — Debrief after every interview**
 
-**The transcript flow (works today with an Obsidian vault):**
-```
-Interview ends
-  → Snaply exports markdown transcript to transcripts/
-  → Run: ingest-meeting
-  → Debrief note created, pipeline updated, prep tasks added
+Drop the transcript into `transcripts/` (Snaply exports markdown directly; any recorder works). Then run:
+
+```bash
+# Reads transcript, classifies the call, creates structured debrief
+ingest-meeting
 ```
 
-This part is currently tightly coupled to an Obsidian vault. Extracting it into a standalone module is on the v0.3 roadmap.
+Or debrief manually if no transcript:
+
+```bash
+interview-debrief
+```
+
+The debrief note captures: questions asked (verbatim where possible), what landed, what didn't, gaps surfaced with evidence.
+
+**Step 2 — Gap extraction**
+
+Every gap surfaced in a debrief gets added to `gaps.md` with:
+- **What**: the specific skill or behaviour that failed
+- **Severity**: HIGH (blocks offers at target level) or MED (weakens performance)
+- **Evidence**: the specific moment from the call — e.g. "couldn't enumerate IPC primitives; interviewer had to guide to pipes and sockets"
+- **Fix plan**: one concrete practice action
+
+Example entry auto-added after a C++ screen:
+```
+| C++ smart pointers vocab | HIGH | xAI screen: described concept without terms; missed cyclic ref | Study shared_ptr mechanics, weak_ptr for cycles; practice 60s cold explanation | open |
+```
+
+**Step 3 — Exercise tasks**
+
+Each new gap spawns a task in `tasks.md`:
+```
+- [ ] (P1) [est: 1h] [flexible] #jobsearch nail shared_ptr/weak_ptr/unique_ptr cold — 60s answer
+```
+
+**Step 4 — Track prep level**
+
+After each practice session, update `PREP_LEVELS` in `vault_update.py`. The dashboard generates a bar chart showing readiness per topic (1=unknown → 5=fluent under pressure), sorted HIGH-severity gaps first.
+
+```python
+PREP_LEVELS = {
+    'C++ smart pointers + IPC':   (2, 'HIGH'),  # ← update this after practice
+    'Algorithms / Coding':        (3, 'HIGH'),
+    'System design narrative':    (3, 'HIGH'),
+    # ...
+}
+```
+
+The chart makes the current weak spots impossible to ignore.
+
+### Second Brain integration
+
+The full system runs inside an Obsidian vault with:
+- `pipeline.md` — company tracker
+- `gaps.md` — skill gap backlog (grows after each debrief)
+- `tasks.md` — prioritised action list (P1/P2/P3)
+- `transcripts/` — auto-ingested meeting transcripts
+- `debriefs/` — structured notes per interview round
+- `plans/` — weekly plans anchored to interview dates
+
+The vault auto-update script (`vault_update.py`) reads from all of these and regenerates `schedule.html` every 6h: a local dashboard showing the full picture — pipeline stages, prep level chart, Gantt timeline — without any cloud dependency.
+
+Extracting this into a standalone module (no Obsidian required) is on the v0.3 roadmap.
 
 ## Design principles
 
