@@ -42,7 +42,7 @@ You add a target company
 
 ## Dashboard preview
 
-Open [`dashboard/demo.html`](dashboard/demo.html) in your browser to see a live demo with sample data — no setup needed.
+**[→ Live demo](https://ankitdixit.github.io/job-copilot/dashboard/demo.html)** — sample pipeline with fake data, no setup needed.
 
 ## What's working today (v0.1)
 
