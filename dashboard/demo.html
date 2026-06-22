@@ -3,146 +3,155 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Job Copilot — Pipeline Demo</title>
+<title>Job Copilot — Dashboard Demo</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #e0e0e0; padding: 2rem; }
-  h1 { font-size: 1.4rem; font-weight: 600; color: #fff; margin-bottom: 0.25rem; }
-  .subtitle { font-size: 0.85rem; color: #666; margin-bottom: 0.5rem; }
-  .demo-badge { display: inline-block; background: #e8a838; color: #000; font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 4px; margin-bottom: 2rem; text-transform: uppercase; letter-spacing: 0.05em; }
-  .stages { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
-  .stage-col { flex: 1; min-width: 160px; background: #1a1d24; border-radius: 8px; padding: 1rem; }
-  .stage-col h2 { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #888; margin-bottom: 0.75rem; }
-  .card { background: #22262f; border-radius: 6px; padding: 0.75rem; margin-bottom: 0.5rem; border-left: 3px solid #444; }
-  .card.target      { border-left-color: #555; }
-  .card.outreach    { border-left-color: #4a9eca; }
-  .card.replied     { border-left-color: #e8a838; }
-  .card.screening   { border-left-color: #a78bfa; }
-  .card.interviewing { border-left-color: #5bba6f; }
-  .card.offer       { border-left-color: #22c55e; }
-  .card.closed      { border-left-color: #444; opacity: 0.45; }
-  .card .company    { font-size: 0.9rem; font-weight: 600; color: #fff; }
-  .card .role       { font-size: 0.75rem; color: #888; margin-top: 0.15rem; }
-  .card .meta       { font-size: 0.7rem; color: #666; margin-top: 0.4rem; }
-  .days             { float: right; font-size: 0.7rem; color: #666; }
-  .days.stale       { color: #e8a838; }
-  .days.urgent      { color: #f87171; }
-  .stats { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
-  .stat { background: #1a1d24; border-radius: 8px; padding: 1rem 1.5rem; }
-  .stat .num { font-size: 1.8rem; font-weight: 700; color: #fff; }
-  .stat .label { font-size: 0.75rem; color: #666; margin-top: 0.1rem; }
-  .empty { font-size: 0.8rem; color: #444; font-style: italic; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#1e1e2e;color:#cdd6f4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;padding:28px 28px 60px;max-width:1100px;margin:0 auto}
+h1{font-size:20px;color:#cba6f7;margin-bottom:2px}
+.upd{color:#6c7086;font-size:11px;margin-bottom:20px}
+h2{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#6c7086;margin:28px 0 10px}
+.demo-badge{display:inline-block;background:#e8a838;color:#000;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;margin-left:10px;vertical-align:middle;text-transform:uppercase;letter-spacing:.05em}
+.goal{border-left:3px solid #cba6f7;background:#252535;border-radius:0 8px 8px 0;padding:14px 18px;margin-bottom:22px}
+.goal-title{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:#cba6f7;margin-bottom:5px}
+.goal-body{font-size:13px;line-height:1.6}
+.goal-body strong{color:#a6e3a1}
+.alert{background:#2d1f2a;border-left:3px solid #f38ba8;border-radius:0 6px 6px 0;padding:10px 16px;margin-bottom:8px;font-size:12px;line-height:1.7}
+.alert strong{color:#f38ba8}
+.gantt-row{display:flex;align-items:center;margin-bottom:3px}
+.gantt-label{width:130px;flex-shrink:0;font-size:11px;color:#6c7086;padding-right:10px;text-align:right}
+.gantt-bars{flex:1;position:relative;height:26px;background:repeating-linear-gradient(90deg,transparent 0,transparent calc(100%/14 - 1px),#313244 calc(100%/14 - 1px),#313244 calc(100%/14))}
+.gantt-dates{height:30px;background:none!important}
+.tick{position:absolute;top:0;display:flex;flex-direction:column;align-items:center;line-height:1.2;transform:translateX(-50%)}
+.tick .d{font-size:12px;font-weight:600;color:#a6adc8}
+.tick .wd{font-size:10px;color:#6c7086}
+.bar{position:absolute;top:3px;height:20px;border-radius:4px;display:flex;align-items:center;padding:0 7px;font-size:11px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:5}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#6c7086;padding:7px 10px;border-bottom:1px solid #313244}
+td{padding:9px 10px;border-bottom:1px solid #313244;vertical-align:middle;line-height:1.5}
+tr:last-child td{border-bottom:none}
 </style>
 </head>
 <body>
 
-<h1>Job Copilot</h1>
-<p class="subtitle">Pipeline dashboard</p>
-<span class="demo-badge">Demo — sample data</span>
+<h1>Job Search Dashboard <span class="demo-badge">Demo</span></h1>
+<div class="upd">Updated: Mon 14 Jul 2025 09:00 — auto-regenerated every 6h</div>
 
-<div class="stats">
-  <div class="stat"><div class="num">9</div><div class="label">Active</div></div>
-  <div class="stat"><div class="num">3</div><div class="label">Awaiting reply</div></div>
-  <div class="stat"><div class="num">2</div><div class="label">Interviewing</div></div>
-  <div class="stat"><div class="num">1</div><div class="label">Offers</div></div>
+<div class="goal">
+  <div class="goal-title">The Goal</div>
+  <div class="goal-body">
+    <strong>Option A:</strong> Significantly outperform current TC — <strong style="color:#cba6f7">£400k+ target</strong>. Work quality secondary.<br>
+    <strong>Option B:</strong> Match current salary (~£180k TC) AND meaningfully better work / mission.<br>
+    Anything below both thresholds is off the table.
+  </div>
 </div>
 
-<div class="stages">
+<div class="alert"><strong>Tomorrow → NovaSystems</strong> — Tue 15 Jul — System design round 2h; prep distributed caching patterns</div>
+<div class="alert"><strong>Wed 16 Jul → QuantumDB</strong> — Wed 16 Jul — Live coding HackerRank-style 90 min; strong on graphs + DP</div>
 
-  <div class="stage-col">
-    <h2>Target (2)</h2>
-    <div class="card target">
-      <span class="days">today</span>
-      <div class="company">Mistral AI</div>
-      <div class="role">Staff Infrastructure Engineer</div>
-      <div class="meta">Find eng contact → send outreach</div>
-    </div>
-    <div class="card target">
-      <span class="days">today</span>
-      <div class="company">Cohere</div>
-      <div class="role">Principal Backend Engineer</div>
-      <div class="meta">Check careers page first</div>
+<h2>Timeline — 14 Jul to 27 Jul 2025</h2>
+<div>
+  <div class="gantt-row">
+    <div class="gantt-label"></div>
+    <div class="gantt-bars gantt-dates">
+      <div class="tick" style="left:calc(0.5*100%/14)"><span class="d">14&nbsp;Jul</span><span class="wd">Mon</span></div>
+      <div class="tick" style="left:calc(1.5*100%/14)"><span class="d">15</span><span class="wd">Tue</span></div>
+      <div class="tick" style="left:calc(2.5*100%/14)"><span class="d">16</span><span class="wd">Wed</span></div>
+      <div class="tick" style="left:calc(3.5*100%/14)"><span class="d">17</span><span class="wd">Thu</span></div>
+      <div class="tick" style="left:calc(4.5*100%/14)"><span class="d">18</span><span class="wd">Fri</span></div>
+      <div class="tick" style="left:calc(5.5*100%/14)"><span class="d">19</span><span class="wd">Sat</span></div>
+      <div class="tick" style="left:calc(6.5*100%/14)"><span class="d">20</span><span class="wd">Sun</span></div>
+      <div class="tick" style="left:calc(7.5*100%/14)"><span class="d">21</span><span class="wd">Mon</span></div>
+      <div class="tick" style="left:calc(8.5*100%/14)"><span class="d">22</span><span class="wd">Tue</span></div>
+      <div class="tick" style="left:calc(9.5*100%/14)"><span class="d">23</span><span class="wd">Wed</span></div>
+      <div class="tick" style="left:calc(10.5*100%/14)"><span class="d">24</span><span class="wd">Thu</span></div>
+      <div class="tick" style="left:calc(11.5*100%/14)"><span class="d">25</span><span class="wd">Fri</span></div>
+      <div class="tick" style="left:calc(12.5*100%/14)"><span class="d">26</span><span class="wd">Sat</span></div>
+      <div class="tick" style="left:calc(13.5*100%/14)"><span class="d">27</span><span class="wd">Sun</span></div>
     </div>
   </div>
-
-  <div class="stage-col">
-    <h2>Outreach Sent (3)</h2>
-    <div class="card outreach">
-      <span class="days stale">9d</span>
-      <div class="company">Poolside</div>
-      <div class="role">Staff Engineer</div>
-      <div class="meta">eng-hiring@example.com — follow up soon</div>
-    </div>
-    <div class="card outreach">
-      <span class="days">3d</span>
-      <div class="company">DataPelago</div>
-      <div class="role">Staff Engineer</div>
-      <div class="meta">careers@example.com</div>
-    </div>
-    <div class="card outreach">
-      <span class="days">1d</span>
-      <div class="company">xAI</div>
-      <div class="role">Staff Systems Engineer</div>
-      <div class="meta">via LinkedIn — recruiter contact</div>
+  <div class="gantt-row">
+    <div class="gantt-label">Interviews</div>
+    <div class="gantt-bars">
+      <div style="position:absolute;top:0;bottom:0;left:calc(0*100%/14);width:2px;background:#f38ba8;z-index:10"></div>
+      <div class="bar" style="left:calc(1*100%/14);width:calc(1*100%/14);background:#3d1a22;color:#f38ba8;border:1px solid #f38ba844">NovaSystems</div>
+      <div class="bar" style="left:calc(2*100%/14);width:calc(1*100%/14);background:#3d1a22;color:#f38ba8;border:1px solid #f38ba844">QuantumDB</div>
+      <div class="bar" style="left:calc(4*100%/14);width:calc(1*100%/14);background:#3d1a22;color:#f38ba8;border:1px solid #f38ba844">Apex AI</div>
+      <div class="bar" style="left:calc(7*100%/14);width:calc(2*100%/14);background:#3d1a22;color:#f38ba8;border:1px solid #f38ba844">CoreSystems loop</div>
+      <div class="bar" style="left:calc(11*100%/14);width:calc(1*100%/14);background:#3d1a22;color:#f38ba8;border:1px solid #f38ba844">VectorLabs</div>
     </div>
   </div>
-
-  <div class="stage-col">
-    <h2>Replied (1)</h2>
-    <div class="card replied">
-      <span class="days">2d</span>
-      <div class="company">Anthropic</div>
-      <div class="role">Staff Engineer, Infrastructure</div>
-      <div class="meta">Book intro call — link sent</div>
-    </div>
-  </div>
-
-  <div class="stage-col">
-    <h2>Screening (1)</h2>
-    <div class="card screening">
-      <span class="days">5d</span>
-      <div class="company">Databricks</div>
-      <div class="role">Staff Software Engineer</div>
-      <div class="meta">Technical screen Thu 2pm</div>
-    </div>
-  </div>
-
-  <div class="stage-col">
-    <h2>Interviewing (2)</h2>
-    <div class="card interviewing">
-      <span class="days">12d</span>
-      <div class="company">Jane Street</div>
-      <div class="role">Software Engineer</div>
-      <div class="meta">Round 3 of 5 — systems design Mon</div>
-    </div>
-    <div class="card interviewing">
-      <span class="days">8d</span>
-      <div class="company">Hudson River Trading</div>
-      <div class="role">Software Engineer</div>
-      <div class="meta">Final round scheduled Fri</div>
-    </div>
-  </div>
-
-  <div class="stage-col">
-    <h2>Offer (1)</h2>
-    <div class="card offer">
-      <span class="days">1d</span>
-      <div class="company">Wiz</div>
-      <div class="role">Staff Engineer</div>
-      <div class="meta">£180k + equity — decision by Fri</div>
-    </div>
-  </div>
-
-  <div class="stage-col">
-    <h2>Closed (1)</h2>
-    <div class="card closed">
-      <span class="days">18d</span>
-      <div class="company">DeepMind</div>
-      <div class="role">Senior Research Engineer</div>
-      <div class="meta">No response after follow-up</div>
-    </div>
-  </div>
-
 </div>
+
+<h2>Comp vs Role Fit — active companies</h2>
+<div style="background:#252535;border-radius:8px;padding:14px 10px 8px;margin-bottom:4px">
+<svg viewBox="0 0 760 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:760px;display:block">
+  <!-- axes -->
+  <line x1="52" y1="22" x2="52" y2="216" stroke="#45475a" stroke-width="1"/>
+  <line x1="52" y1="216" x2="736" y2="216" stroke="#45475a" stroke-width="1"/>
+  <!-- x axis ticks -->
+  <line x1="52" y1="216" x2="52" y2="220" stroke="#45475a"/><text x="52" y="231" text-anchor="middle" fill="#6c7086" font-size="10">£0k</text>
+  <line x1="223" y1="216" x2="223" y2="220" stroke="#45475a"/><text x="223" y="231" text-anchor="middle" fill="#6c7086" font-size="10">£200k</text>
+  <line x1="394" y1="216" x2="394" y2="220" stroke="#45475a"/><text x="394" y="231" text-anchor="middle" fill="#6c7086" font-size="10">£400k</text>
+  <line x1="565" y1="216" x2="565" y2="220" stroke="#45475a"/><text x="565" y="231" text-anchor="middle" fill="#6c7086" font-size="10">£600k</text>
+  <line x1="736" y1="216" x2="736" y2="220" stroke="#45475a"/><text x="736" y="231" text-anchor="middle" fill="#6c7086" font-size="10">£800k</text>
+  <text x="394" y="256" text-anchor="middle" fill="#6c7086" font-size="10">Total Comp (£k/yr)</text>
+  <!-- y axis ticks -->
+  <line x1="48" y1="196.6" x2="52" y2="196.6" stroke="#45475a"/><text x="45" y="200" text-anchor="end" fill="#6c7086" font-size="10">1</text>
+  <line x1="48" y1="157.8" x2="52" y2="157.8" stroke="#45475a"/><text x="45" y="161" text-anchor="end" fill="#6c7086" font-size="10">2</text>
+  <line x1="48" y1="119" x2="52" y2="119" stroke="#45475a"/><text x="45" y="123" text-anchor="end" fill="#6c7086" font-size="10">3</text>
+  <line x1="48" y1="80.2" x2="52" y2="80.2" stroke="#45475a"/><text x="45" y="84" text-anchor="end" fill="#6c7086" font-size="10">4</text>
+  <line x1="48" y1="41.4" x2="52" y2="41.4" stroke="#45475a"/><text x="45" y="45" text-anchor="end" fill="#6c7086" font-size="10">5</text>
+  <text x="12" y="119" text-anchor="middle" fill="#6c7086" font-size="10" transform="rotate(-90,12,119)">Role Fit</text>
+  <!-- grid lines -->
+  <line x1="52" y1="196.6" x2="736" y2="196.6" stroke="#313244" stroke-width="1"/>
+  <line x1="52" y1="157.8" x2="736" y2="157.8" stroke="#313244" stroke-width="1"/>
+  <line x1="52" y1="119" x2="736" y2="119" stroke="#313244" stroke-width="1"/>
+  <line x1="52" y1="80.2" x2="736" y2="80.2" stroke="#313244" stroke-width="1"/>
+  <line x1="52" y1="41.4" x2="736" y2="41.4" stroke="#313244" stroke-width="1"/>
+  <!-- genuine targets (purple) — high comp, high fit -->
+  <circle cx="394" cy="51" r="8" fill="#cba6f7" fill-opacity="0.75" stroke="#d4b4ff" stroke-width="1.5"><title>CoreSystems: £400k TC, fit 5/5</title></circle>
+  <text x="404" y="65" fill="#cdd6f4" font-size="9.5" font-weight="500">CoreSystems</text>
+  <circle cx="308" cy="68" r="7" fill="#cba6f7" fill-opacity="0.75" stroke="#d4b4ff" stroke-width="1.5"><title>Apex AI: £300k TC, fit 4.5/5</title></circle>
+  <text x="318" y="63" fill="#cdd6f4" font-size="9.5" font-weight="500">Apex AI</text>
+  <circle cx="480" cy="60" r="7" fill="#cba6f7" fill-opacity="0.75" stroke="#d4b4ff" stroke-width="1.5"><title>VectorLabs: £480k TC, fit 4.5/5</title></circle>
+  <text x="490" y="55" fill="#cdd6f4" font-size="9.5" font-weight="500">VectorLabs</text>
+  <circle cx="650" cy="83" r="7" fill="#cba6f7" fill-opacity="0.75" stroke="#d4b4ff" stroke-width="1.5"><title>TradeEngine: £680k TC, fit 4/5</title></circle>
+  <text x="660" y="80" fill="#cdd6f4" font-size="9.5" font-weight="500">TradeEngine</text>
+  <!-- practice / low comp (grey) -->
+  <circle cx="195" cy="132" r="7" fill="#585b70" fill-opacity="0.75" stroke="#7f849c" stroke-width="1.5"><title>NovaSystems: £165k TC, fit 2.5/5</title></circle>
+  <text x="205" y="129" fill="#cdd6f4" font-size="9.5" font-weight="500">NovaSystems</text>
+  <circle cx="171" cy="144" r="7" fill="#585b70" fill-opacity="0.75" stroke="#7f849c" stroke-width="1.5"><title>QuantumDB: £140k TC, fit 2.5/5</title></circle>
+  <text x="181" y="141" fill="#cdd6f4" font-size="9.5" font-weight="500">QuantumDB</text>
+  <circle cx="220" cy="157" r="7" fill="#585b70" fill-opacity="0.75" stroke="#7f849c" stroke-width="1.5"><title>GridScale: £185k TC, fit 2/5</title></circle>
+  <text x="230" y="154" fill="#cdd6f4" font-size="9.5" font-weight="500">GridScale</text>
+  <!-- legend -->
+  <circle cx="592" cy="28" r="6" fill="#cba6f7" fill-opacity="0.75" stroke="#d4b4ff" stroke-width="1.5"/>
+  <text x="602" y="32" fill="#a6adc8" font-size="9.5">Genuine target</text>
+  <circle cx="592" cy="44" r="6" fill="#585b70" fill-opacity="0.75" stroke="#7f849c" stroke-width="1.5"/>
+  <text x="602" y="48" fill="#a6adc8" font-size="9.5">Practice / low-comp</text>
+  <text x="602" y="62" fill="#6c7086" font-size="9">Bubble size = rounds done</text>
+</svg>
+</div>
+
+<h2>Company Pipeline</h2>
+<table>
+  <thead><tr>
+    <th style="width:160px">Company</th>
+    <th style="width:90px">Date</th>
+    <th style="width:220px">Stage</th>
+    <th>Next action</th>
+  </tr></thead>
+  <tbody>
+    <tr><td><strong>NovaSystems</strong></td><td style="color:#f38ba8;white-space:nowrap;font-size:12px">Tue 15 Jul</td><td style="font-size:11px;color:#a6adc8">Round 1 done → System design confirmed Tue 15 Jul 14:00–16:00 BST</td><td style="font-size:12px;color:#6c7086">Prep distributed caching + rate limiting patterns</td></tr>
+    <tr><td><strong>QuantumDB</strong></td><td style="color:#f38ba8;white-space:nowrap;font-size:12px">Wed 16 Jul</td><td style="font-size:11px;color:#a6adc8">Applied Jun 30 → HackerRank confirmed Wed 16 Jul 10:00–11:30 BST</td><td style="font-size:12px;color:#6c7086">Attend coding round; strong on graph traversal</td></tr>
+    <tr><td><strong>Apex AI</strong></td><td style="color:#a6adc8;white-space:nowrap;font-size:12px">Fri 18 Jul</td><td style="font-size:11px;color:#a6adc8">Recruiter call done → Technical screen Fri 18 Jul 15:00 BST</td><td style="font-size:12px;color:#6c7086">Prep ML infra questions; confirm Python or C++</td></tr>
+    <tr><td><strong>CoreSystems</strong></td><td style="color:#a6adc8;white-space:nowrap;font-size:12px">21–22 Jul</td><td style="font-size:11px;color:#a6adc8">Passed HLD → Full loop confirmed Mon 21 + Tue 22 Jul</td><td style="font-size:12px;color:#6c7086">Reply to recruiter to confirm slot availability; prep 3 STAR stories</td></tr>
+    <tr><td><strong>VectorLabs</strong></td><td style="color:#a6adc8;white-space:nowrap;font-size:12px">Fri 25 Jul</td><td style="font-size:11px;color:#a6adc8">HM intro done (positive) → Final interview Fri 25 Jul</td><td style="font-size:12px;color:#6c7086">Confirm format with recruiter; prep systems design at scale</td></tr>
+    <tr><td><strong>TradeEngine</strong></td><td style="color:#a6adc8;white-space:nowrap;font-size:12px">TBC</td><td style="font-size:11px;color:#a6adc8">Applied via referral Jul 2 → Awaiting recruiter response</td><td style="font-size:12px;color:#6c7086">Follow up if no reply by Jul 16</td></tr>
+    <tr><td><strong>GridScale</strong></td><td style="color:#a6adc8;white-space:nowrap;font-size:12px">TBC</td><td style="font-size:11px;color:#a6adc8">Intro call done Jun 28 → Take-home submitted Jul 5</td><td style="font-size:12px;color:#6c7086">Await take-home result; expect 5–7 business days</td></tr>
+    <tr><td><strong>OpenModel</strong></td><td style="color:#a6adc8;white-space:nowrap;font-size:12px">TBC</td><td style="font-size:11px;color:#a6adc8">Applied Jul 1 — Staff Infra Engineer, London — open role confirmed</td><td style="font-size:12px;color:#6c7086">Await response; contact eng lead on LinkedIn as backup</td></tr>
+  </tbody>
+</table>
+
 </body>
 </html>
