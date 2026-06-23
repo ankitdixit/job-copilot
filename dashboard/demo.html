@@ -17,7 +17,7 @@ h2{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#6c7086;ma
 .alert strong{color:#f38ba8}
 .gantt-row{display:flex;align-items:center;margin-bottom:3px}
 .gantt-label{width:130px;flex-shrink:0;font-size:11px;color:#6c7086;padding-right:10px;text-align:right}
-.gantt-bars{flex:1;position:relative;height:26px;background:repeating-linear-gradient(90deg,transparent 0,transparent calc(100%/14 - 1px),#313244 calc(100%/14 - 1px),#313244 calc(100%/14))}
+.gantt-bars{flex:1;position:relative;height:26px;background:repeating-linear-gradient(90deg,transparent 0,transparent calc(100%/19 - 1px),#313244 calc(100%/19 - 1px),#313244 calc(100%/19))}
 .gantt-dates{height:30px;background:none!important}
 .tick{position:absolute;top:0;display:flex;flex-direction:column;align-items:center;line-height:1.2;transform:translateX(-50%)}
 .tick .d{font-size:12px;font-weight:600;color:#a6adc8}
@@ -42,25 +42,75 @@ tr:last-child td{border-bottom:none}
   </div>
 </div>
 
-<div class="alert"><strong>Tomorrow → NovaSystems</strong> — Thu 12 Jun — System design round 15:00 BST — prep distributed caching + vector store architecture</div>
-<div class="alert"><strong>Sat 14 Jun → VectorLabs</strong> — Sat 14 Jun — Coding interview (2h, CoderPad) — graph algorithms + LLM serving optimisation</div>
+<div class="alert"><strong>Tomorrow → NovaSystems (C&amp;L)</strong> — Wed 24 Jun — Collaboration &amp; Leadership round 11:00 BST — have STAR stories ready</div>
+<div class="alert"><strong>Tomorrow → CoreSystems</strong> — Wed 24 Jun — Technical screen 15:00 BST — warm-up round, show up sharp</div>
+<div class="alert"><strong>Thu 25 Jun → VectorLabs</strong> — C++ live coding 2h (CoderPad) — warm-up only morning of; no new material after 10:30</div>
 
-<h2>Timeline — 10 Jun to 23 Jun 2026</h2>
+<h2>Timeline — 23 Jun to 11 Jul 2026</h2>
 <div>
+  <!-- Date ticks: every 2 days, centred in each day column -->
   <div class="gantt-row">
     <div class="gantt-label"></div>
-    <div class="gantt-bars gantt-dates"><div class="tick" style="left:calc(0.5*100%/14)"><span class="d">10&nbsp;Jun</span><span class="wd">Wed</span></div><div class="tick" style="left:calc(1.5*100%/14)"><span class="d">11</span><span class="wd">Thu</span></div><div class="tick" style="left:calc(2.5*100%/14)"><span class="d">12</span><span class="wd">Fri</span></div><div class="tick" style="left:calc(3.5*100%/14)"><span class="d">13</span><span class="wd">Sat</span></div><div class="tick" style="left:calc(4.5*100%/14)"><span class="d">14</span><span class="wd">Sun</span></div><div class="tick" style="left:calc(5.5*100%/14)"><span class="d">15</span><span class="wd">Mon</span></div><div class="tick" style="left:calc(6.5*100%/14)"><span class="d">16</span><span class="wd">Tue</span></div><div class="tick" style="left:calc(7.5*100%/14)"><span class="d">17</span><span class="wd">Wed</span></div><div class="tick" style="left:calc(8.5*100%/14)"><span class="d">18</span><span class="wd">Thu</span></div><div class="tick" style="left:calc(9.5*100%/14)"><span class="d">19</span><span class="wd">Fri</span></div><div class="tick" style="left:calc(10.5*100%/14)"><span class="d">20</span><span class="wd">Sat</span></div><div class="tick" style="left:calc(11.5*100%/14)"><span class="d">21</span><span class="wd">Sun</span></div><div class="tick" style="left:calc(12.5*100%/14)"><span class="d">22</span><span class="wd">Mon</span></div><div class="tick" style="left:calc(13.5*100%/14)"><span class="d">23</span><span class="wd">Tue</span></div></div>
+    <div class="gantt-bars gantt-dates">
+      <div class="tick" style="left:calc(0.5*100%/19)"><span class="d">23&nbsp;Jun</span><span class="wd">Tue</span></div>
+      <div class="tick" style="left:calc(2.5*100%/19)"><span class="d">25</span><span class="wd">Thu</span></div>
+      <div class="tick" style="left:calc(4.5*100%/19)"><span class="d">27</span><span class="wd">Sat</span></div>
+      <div class="tick" style="left:calc(6.5*100%/19)"><span class="d">29</span><span class="wd">Mon</span></div>
+      <div class="tick" style="left:calc(8.5*100%/19)"><span class="d">1&nbsp;Jul</span><span class="wd">Wed</span></div>
+      <div class="tick" style="left:calc(10.5*100%/19)"><span class="d">3</span><span class="wd">Fri</span></div>
+      <div class="tick" style="left:calc(12.5*100%/19)"><span class="d">5</span><span class="wd">Sun</span></div>
+      <div class="tick" style="left:calc(14.5*100%/19)"><span class="d">7</span><span class="wd">Tue</span></div>
+      <div class="tick" style="left:calc(16.5*100%/19)"><span class="d">9</span><span class="wd">Thu</span></div>
+      <div class="tick" style="left:calc(18.5*100%/19)"><span class="d">11</span><span class="wd">Sat</span></div>
+    </div>
   </div>
+  <!-- C++ coding — daily 2h block -->
+  <div class="gantt-row">
+    <div class="gantt-label">C++ coding</div>
+    <div class="gantt-bars">
+      <div class="bar" style="left:calc(0*100%/19);width:calc(15*100%/19);background:#1d3a25;color:#5bba6f;border:1px solid #5bba6f44" title="2h daily — game loops, DP, graphs, systems programming; feeds all coding rounds">2h / day → QuantumAI coding round</div>
+    </div>
+  </div>
+  <!-- STAR stories + Tech Fit slides -->
+  <div class="gantt-row">
+    <div class="gantt-label">STAR + slides</div>
+    <div class="gantt-bars">
+      <div class="bar" style="left:calc(1*100%/19);width:calc(14*100%/19);background:#1a2d3d;color:#4a9eca;border:1px solid #4a9eca44" title="1h daily — staff-scope stories; convert to Tech Fit deck by Jul 6">1h / day → staff stories + deck</div>
+    </div>
+  </div>
+  <!-- System design sprints -->
+  <div class="gantt-row">
+    <div class="gantt-label">System design</div>
+    <div class="gantt-bars">
+      <div class="bar" style="left:calc(3*100%/19);width:calc(1*100%/19);background:#2a2510;color:#e8a838;border:1px solid #e8a83844" title="Fri Jun 26 — distributed cache + rate limiter (2 full problems)">Fri sprint</div>
+      <div class="bar" style="left:calc(10*100%/19);width:calc(4*100%/19);background:#2a2510;color:#e8a838;border:1px solid #e8a83844" title="Jul 3–6 — QuantumAI HLD problems: distributed KV, streaming system, chat at scale">QuantumAI HLD sprint</div>
+    </div>
+  </div>
+  <!-- Interviews row -->
   <div class="gantt-row">
     <div class="gantt-label">Interviews</div>
     <div class="gantt-bars">
-      <div style="position:absolute;top:0;bottom:0;left:calc(1*100%/14);width:2px;background:#f38ba8;z-index:10"></div>
-      <div style="position:absolute;top:0;bottom:0;left:calc(3*100%/14);width:calc(2*100%/14);background:rgba(255,255,255,.03)"></div>
-      <div style="position:absolute;top:0;bottom:0;left:calc(10*100%/14);width:calc(2*100%/14);background:rgba(255,255,255,.03)"></div>
-      <div class="bar" style="left:calc(2*100%/14);width:calc(1*100%/14);background:#3d1a22;color:#f38ba8;border:1px solid #f38ba844" title="System design 15:00 BST">NovaSystems</div>
-      <div class="bar" style="left:calc(4*100%/14);width:calc(1*100%/14);background:#3d1a22;color:#f38ba8;border:1px solid #f38ba844" title="Coding interview 14:00 BST">VectorLabs</div>
-      <div class="bar" style="left:calc(7*100%/14);width:calc(1*100%/14);background:#3d1a22;color:#f38ba8;border:1px solid #f38ba844" title="HM intro 10:00 BST">InferenceEdge</div>
-      <div class="bar" style="left:calc(9*100%/14);width:calc(1*100%/14);background:#3d1a22;color:#f38ba8;border:1px solid #f38ba844" title="Full loop day — final round">QuantumAI</div>
+      <!-- Today marker -->
+      <div style="position:absolute;top:0;bottom:0;left:0;width:2px;background:#cba6f7;z-index:10" title="Today — Jun 23"></div>
+      <!-- Jun 24: NovaSystems C&L + CoreSystems screen -->
+      <div class="bar" style="left:calc(1*100%/19);width:calc(1*100%/19);background:#3d1a22;color:#f38ba8;border:1px solid #f38ba844" title="NovaSystems C&L 11:00 + CoreSystems screen 15:00">2× rounds</div>
+      <!-- Jun 25: VectorLabs C++ live coding -->
+      <div class="bar" style="left:calc(2*100%/19);width:calc(1*100%/19);background:#3d1a22;color:#f38ba8;border:1px solid #f38ba844" title="VectorLabs — C++ live coding 2h">VectorLabs</div>
+      <!-- Jun 29–30: NovaSystems loop (4 rounds) -->
+      <div class="bar" style="left:calc(6*100%/19);width:calc(2*100%/19);background:#3d1a22;color:#f38ba8;border:1px solid #f38ba844" title="NovaSystems loop — Design 1 + Coding 2 (Mon); Design 2 + Coding 1 (Tue)">NovaSystems loop</div>
+      <!-- Jul 1: DataStack Inc screen -->
+      <div class="bar" style="left:calc(8*100%/19);width:calc(1*100%/19);background:#222332;color:#a6adc8;border:1px solid #45475a" title="DataStack Inc — recruiter screen (low stakes, just show up)">DataStack</div>
+      <!-- Jul 2: InferenceEdge -->
+      <div class="bar" style="left:calc(9*100%/19);width:calc(1*100%/19);background:#3d1a22;color:#f38ba8;border:1px solid #f38ba844" title="InferenceEdge — coding + system design 45min">InferenceEdge</div>
+      <!-- Jul 7–8: QuantumAI onsite (the big one) -->
+      <div class="bar" style="left:calc(14*100%/19);width:calc(2*100%/19);background:#2a1a3d;color:#cba6f7;border:1px solid #cba6f744;font-weight:700" title="QuantumAI — 5-round virtual onsite over 2 days">★ QuantumAI onsite</div>
+    </div>
+  </div>
+  <!-- TBC row -->
+  <div class="gantt-row">
+    <div class="gantt-label">TBC</div>
+    <div class="gantt-bars">
+      <div class="bar" style="left:calc(14*100%/19);width:calc(5*100%/19);background:#1a1f2a;color:#585b70;border:1px solid #313244;font-style:italic" title="StreamBase / Amplify AI / OpenLLM Co / CommodiCore — new dates TBC Jul 7+">StreamBase / Amplify / OpenLLM / CommodiCore</div>
     </div>
   </div>
 </div>
@@ -97,39 +147,39 @@ tr:last-child td{border-bottom:none}
 <line x1="52" y1="119.0" x2="736" y2="119.0" stroke="#313244" stroke-width="1"/>
 <line x1="52" y1="80.2" x2="736" y2="80.2" stroke="#313244" stroke-width="1"/>
 <line x1="52" y1="41.4" x2="736" y2="41.4" stroke="#313244" stroke-width="1"/>
-<!-- QuantumAI: £500k fit 5 → cx=479.5 cy=22 -->
-<circle cx="479.5" cy="22" r="7" fill="#cba6f7" fill-opacity="0.75" stroke="#d4b4ff" stroke-width="1.5"><title>QuantumAI: £500k TC, fit 5/5</title></circle>
-<text x="489.5" y="36" fill="#cdd6f4" font-size="9.5" font-weight="500">QuantumAI</text>
-<!-- Amplify AI: £450k fit 5 → cx=436.75 cy=32 (offset to avoid QuantumAI) -->
-<circle cx="436.75" cy="32" r="7" fill="#cba6f7" fill-opacity="0.75" stroke="#d4b4ff" stroke-width="1.5"><title>Amplify AI: £450k TC, fit 5/5</title></circle>
-<text x="446.75" y="29" fill="#cdd6f4" font-size="9.5" font-weight="500">Amplify AI</text>
-<!-- VectorLabs: £420k fit 4.5 → cx=410.05 cy=46.25 -->
-<circle cx="410.05" cy="46.25" r="7" fill="#cba6f7" fill-opacity="0.75" stroke="#d4b4ff" stroke-width="1.5"><title>VectorLabs: £420k TC, fit 4.5/5</title></circle>
-<text x="420.05" y="43.25" fill="#cdd6f4" font-size="9.5" font-weight="500">VectorLabs</text>
-<!-- NovaSystems: £350k fit 4.5 → cx=351.25 cy=56.25 -->
-<circle cx="351.25" cy="56.25" r="7" fill="#cba6f7" fill-opacity="0.75" stroke="#d4b4ff" stroke-width="1.5"><title>NovaSystems: £350k TC, fit 4.5/5</title></circle>
-<text x="361.25" y="53.25" fill="#cdd6f4" font-size="9.5" font-weight="500">NovaSystems</text>
-<!-- InferenceEdge: £380k fit 4 → cx=376.15 cy=70.5 -->
-<circle cx="376.15" cy="70.5" r="7" fill="#cba6f7" fill-opacity="0.75" stroke="#d4b4ff" stroke-width="1.5"><title>InferenceEdge: £380k TC, fit 4/5</title></circle>
+<!-- QuantumAI: £500k fit 5 → cx=479.5 cy=41.4 -->
+<circle cx="479.5" cy="41.4" r="8" fill="#cba6f7" fill-opacity="0.8" stroke="#d4b4ff" stroke-width="2"><title>QuantumAI: £500k TC, fit 5/5 — 5-round onsite scheduled</title></circle>
+<text x="490" y="44" fill="#cdd6f4" font-size="9.5" font-weight="600">QuantumAI ★</text>
+<!-- NovaSystems: £450k fit 4.5 → cx=436.75 cy=60.8 -->
+<circle cx="436.75" cy="60.8" r="7" fill="#cba6f7" fill-opacity="0.75" stroke="#d4b4ff" stroke-width="1.5"><title>NovaSystems: £450k TC, fit 4.5/5 — 5-round loop in progress</title></circle>
+<text x="446.75" y="57" fill="#cdd6f4" font-size="9.5" font-weight="500">NovaSystems</text>
+<!-- VectorLabs: £420k fit 5 → cx=411.1 cy=41.4 (offset up from QuantumAI) -->
+<circle cx="411.1" cy="28" r="7" fill="#cba6f7" fill-opacity="0.75" stroke="#d4b4ff" stroke-width="1.5"><title>VectorLabs: £420k TC, fit 5/5 — C++ live coding Jun 25</title></circle>
+<text x="421.1" y="25" fill="#cdd6f4" font-size="9.5" font-weight="500">VectorLabs</text>
+<!-- StreamBase: £380k fit 4 → cx=376.9 cy=80.2 -->
+<circle cx="358" cy="80.2" r="7" fill="#cba6f7" fill-opacity="0.75" stroke="#d4b4ff" stroke-width="1.5"><title>StreamBase: £380k TC, fit 4/5 — date TBC Jul 7+</title></circle>
+<text x="368" y="77" fill="#cdd6f4" font-size="9.5" font-weight="500">StreamBase</text>
+<!-- InferenceEdge: £400k fit 4.5 → cx=394 cy=60.8 (offset) -->
+<circle cx="376.15" cy="70.5" r="7" fill="#cba6f7" fill-opacity="0.75" stroke="#d4b4ff" stroke-width="1.5"><title>InferenceEdge: £400k TC, fit 4.5/5 — coding + design Jul 2</title></circle>
 <text x="386.15" y="67.5" fill="#cdd6f4" font-size="9.5" font-weight="500">InferenceEdge</text>
-<!-- CoreSystems: £280k fit 3.5 → cx=291.4 cy=94.75 -->
-<circle cx="291.4" cy="94.75" r="7" fill="#585b70" fill-opacity="0.75" stroke="#7f849c" stroke-width="1.5"><title>CoreSystems: £280k TC, fit 3.5/5</title></circle>
-<text x="301.4" y="91.75" fill="#cdd6f4" font-size="9.5" font-weight="500">CoreSystems</text>
-<!-- StreamBase: £310k fit 3 → cx=317.05 cy=119 -->
-<circle cx="317.05" cy="119" r="7" fill="#585b70" fill-opacity="0.75" stroke="#7f849c" stroke-width="1.5"><title>StreamBase: £310k TC, fit 3/5</title></circle>
-<text x="327.05" y="116" fill="#cdd6f4" font-size="9.5" font-weight="500">StreamBase</text>
-<!-- DataStack Inc: £250k fit 3 → cx=265.75 cy=129 (offset from StreamBase) -->
-<circle cx="265.75" cy="129" r="7" fill="#585b70" fill-opacity="0.75" stroke="#7f849c" stroke-width="1.5"><title>DataStack Inc: £250k TC, fit 3/5</title></circle>
-<text x="275.75" y="126" fill="#cdd6f4" font-size="9.5" font-weight="500">DataStack Inc</text>
-<!-- OpenLLM Co: £200k fit 2.5 → cx=223 cy=143.25 -->
-<circle cx="223" cy="143.25" r="7" fill="#585b70" fill-opacity="0.75" stroke="#7f849c" stroke-width="1.5"><title>OpenLLM Co: £200k TC, fit 2.5/5</title></circle>
-<text x="233" y="140.25" fill="#cdd6f4" font-size="9.5" font-weight="500">OpenLLM Co</text>
+<!-- Amplify AI: £320k fit 3.5 → cx=325.6 cy=99.6 -->
+<circle cx="325.6" cy="99.6" r="7" fill="#585b70" fill-opacity="0.75" stroke="#7f849c" stroke-width="1.5"><title>Amplify AI: £320k TC, fit 3.5/5 — Superday TBC Jul 8/10</title></circle>
+<text x="335.6" y="96.6" fill="#cdd6f4" font-size="9.5" font-weight="500">Amplify AI</text>
+<!-- CoreSystems: £300k fit 3 → cx=308.5 cy=119 -->
+<circle cx="308.5" cy="113" r="7" fill="#585b70" fill-opacity="0.75" stroke="#7f849c" stroke-width="1.5"><title>CoreSystems: £300k TC, fit 3/5 — screen Jun 24 (warm-up)</title></circle>
+<text x="318.5" y="110" fill="#cdd6f4" font-size="9.5" font-weight="500">CoreSystems</text>
+<!-- OpenLLM Co: £250k fit 3 → cx=265.75 cy=119 (offset down) -->
+<circle cx="265.75" cy="129" r="7" fill="#585b70" fill-opacity="0.75" stroke="#7f849c" stroke-width="1.5"><title>OpenLLM Co: £250k TC, fit 3/5 — date TBC Jul 8+</title></circle>
+<text x="275.75" y="126" fill="#cdd6f4" font-size="9.5" font-weight="500">OpenLLM Co</text>
+<!-- DataStack Inc: £130k fit 2 → cx=163.15 cy=157.8 (practice only) -->
+<circle cx="163.15" cy="157.8" r="7" fill="#585b70" fill-opacity="0.75" stroke="#7f849c" stroke-width="1.5"><title>DataStack Inc: £130k TC, fit 2/5 — recruiter screen Jul 1 (practice only)</title></circle>
+<text x="173.15" y="154.8" fill="#cdd6f4" font-size="9.5" font-weight="500">DataStack Inc</text>
 <!-- Legend -->
 <circle cx="592" cy="28" r="6" fill="#cba6f7" fill-opacity="0.75" stroke="#d4b4ff" stroke-width="1.5"/>
-<text x="602" y="32" fill="#a6adc8" font-size="9.5">Genuine target</text>
+<text x="602" y="32" fill="#a6adc8" font-size="9.5">Genuine target (fit 4+)</text>
 <circle cx="592" cy="44" r="6" fill="#585b70" fill-opacity="0.75" stroke="#7f849c" stroke-width="1.5"/>
 <text x="602" y="48" fill="#a6adc8" font-size="9.5">Practice / low-comp</text>
-<text x="602" y="62" fill="#6c7086" font-size="9">Bubble size = rounds done</text>
+<text x="602" y="62" fill="#6c7086" font-size="9">Bubble ★ = onsite reached</text>
 </svg>
 </div>
 
@@ -139,76 +189,97 @@ tr:last-child td{border-bottom:none}
 <!-- HIGH severity gaps — sorted by level ascending -->
 <text x="232" y="22" text-anchor="end" fill="#cdd6f4" font-size="11">Algorithms / Coding</text>
 <rect x="240" y="11" width="400" height="14" rx="3" fill="#313244"/>
-<rect x="240" y="11" width="140" height="14" rx="3" fill="#f38ba8" fill-opacity="0.65"/>
-<text x="650" y="22" fill="#f38ba8" font-size="11" font-weight="600">2/5</text>
-<text x="686" y="22" fill="#f38ba8" font-size="9" fill-opacity="0.7">HIGH</text>
+<rect x="240" y="11" width="160" height="14" rx="3" fill="#f38ba8" fill-opacity="0.65"/>
+<text x="650" y="22" fill="#f38ba8" font-size="11" font-weight="600">2.5/5</text>
+<text x="692" y="22" fill="#f38ba8" font-size="9" fill-opacity="0.7">HIGH</text>
 
 <text x="232" y="49" text-anchor="end" fill="#cdd6f4" font-size="11">C++ fundamentals</text>
 <rect x="240" y="38" width="400" height="14" rx="3" fill="#313244"/>
-<rect x="240" y="38" width="140" height="14" rx="3" fill="#f38ba8" fill-opacity="0.65"/>
-<text x="650" y="49" fill="#f38ba8" font-size="11" font-weight="600">2/5</text>
-<text x="686" y="49" fill="#f38ba8" font-size="9" fill-opacity="0.7">HIGH</text>
+<rect x="240" y="38" width="160" height="14" rx="3" fill="#f38ba8" fill-opacity="0.65"/>
+<text x="650" y="49" fill="#f38ba8" font-size="11" font-weight="600">2.5/5</text>
+<text x="692" y="49" fill="#f38ba8" font-size="9" fill-opacity="0.7">HIGH</text>
 
 <text x="232" y="76" text-anchor="end" fill="#cdd6f4" font-size="11">HLD communication</text>
 <rect x="240" y="65" width="400" height="14" rx="3" fill="#313244"/>
-<rect x="240" y="65" width="140" height="14" rx="3" fill="#f38ba8" fill-opacity="0.65"/>
-<text x="650" y="76" fill="#f38ba8" font-size="11" font-weight="600">2/5</text>
-<text x="686" y="76" fill="#f38ba8" font-size="9" fill-opacity="0.7">HIGH</text>
+<rect x="240" y="65" width="200" height="14" rx="3" fill="#f38ba8" fill-opacity="0.65"/>
+<text x="650" y="76" fill="#f38ba8" font-size="11" font-weight="600">3/5</text>
+<text x="692" y="76" fill="#f38ba8" font-size="9" fill-opacity="0.7">HIGH</text>
 
 <text x="232" y="103" text-anchor="end" fill="#cdd6f4" font-size="11">Staff behavioural stories</text>
 <rect x="240" y="92" width="400" height="14" rx="3" fill="#313244"/>
 <rect x="240" y="92" width="240" height="14" rx="3" fill="#f38ba8" fill-opacity="0.65"/>
 <text x="650" y="103" fill="#f38ba8" font-size="11" font-weight="600">3/5</text>
-<text x="686" y="103" fill="#f38ba8" font-size="9" fill-opacity="0.7">HIGH</text>
+<text x="692" y="103" fill="#f38ba8" font-size="9" fill-opacity="0.7">HIGH</text>
 
 <text x="232" y="130" text-anchor="end" fill="#cdd6f4" font-size="11">System design narrative</text>
 <rect x="240" y="119" width="400" height="14" rx="3" fill="#313244"/>
 <rect x="240" y="119" width="240" height="14" rx="3" fill="#f38ba8" fill-opacity="0.65"/>
 <text x="650" y="130" fill="#f38ba8" font-size="11" font-weight="600">3/5</text>
-<text x="686" y="130" fill="#f38ba8" font-size="9" fill-opacity="0.7">HIGH</text>
+<text x="692" y="130" fill="#f38ba8" font-size="9" fill-opacity="0.7">HIGH</text>
 
 <text x="232" y="157" text-anchor="end" fill="#cdd6f4" font-size="11">Answer length discipline</text>
 <rect x="240" y="146" width="400" height="14" rx="3" fill="#313244"/>
 <rect x="240" y="146" width="240" height="14" rx="3" fill="#f38ba8" fill-opacity="0.65"/>
 <text x="650" y="157" fill="#f38ba8" font-size="11" font-weight="600">3/5</text>
-<text x="686" y="157" fill="#f38ba8" font-size="9" fill-opacity="0.7">HIGH</text>
+<text x="692" y="157" fill="#f38ba8" font-size="9" fill-opacity="0.7">HIGH</text>
 
 <!-- MED severity gaps -->
 <text x="232" y="184" text-anchor="end" fill="#cdd6f4" font-size="11">ML systems knowledge</text>
 <rect x="240" y="173" width="400" height="14" rx="3" fill="#313244"/>
 <rect x="240" y="173" width="240" height="14" rx="3" fill="#e8a838" fill-opacity="0.65"/>
 <text x="650" y="184" fill="#e8a838" font-size="11" font-weight="600">3/5</text>
-<text x="686" y="184" fill="#e8a838" font-size="9" fill-opacity="0.7">MED</text>
+<text x="692" y="184" fill="#e8a838" font-size="9" fill-opacity="0.7">MED</text>
 
-<text x="232" y="211" text-anchor="end" fill="#cdd6f4" font-size="11">Python fluency</text>
+<text x="232" y="211" text-anchor="end" fill="#cdd6f4" font-size="11">Structuring verbal answers</text>
 <rect x="240" y="200" width="400" height="14" rx="3" fill="#313244"/>
 <rect x="240" y="200" width="240" height="14" rx="3" fill="#e8a838" fill-opacity="0.65"/>
 <text x="650" y="211" fill="#e8a838" font-size="11" font-weight="600">3/5</text>
-<text x="686" y="211" fill="#e8a838" font-size="9" fill-opacity="0.7">MED</text>
+<text x="692" y="211" fill="#e8a838" font-size="9" fill-opacity="0.7">MED</text>
 
-<text x="232" y="238" text-anchor="end" fill="#cdd6f4" font-size="11">Structuring verbal answers</text>
+<text x="232" y="238" text-anchor="end" fill="#cdd6f4" font-size="11">Streaming protocol vocab</text>
 <rect x="240" y="227" width="400" height="14" rx="3" fill="#313244"/>
-<rect x="240" y="227" width="240" height="14" rx="3" fill="#e8a838" fill-opacity="0.65"/>
-<text x="650" y="238" fill="#e8a838" font-size="11" font-weight="600">3/5</text>
-<text x="686" y="238" fill="#e8a838" font-size="9" fill-opacity="0.7">MED</text>
+<rect x="240" y="227" width="320" height="14" rx="3" fill="#e8a838" fill-opacity="0.65"/>
+<text x="650" y="238" fill="#e8a838" font-size="11" font-weight="600">4/5</text>
+<text x="692" y="238" fill="#e8a838" font-size="9" fill-opacity="0.7">MED</text>
 
-<text x="232" y="265" text-anchor="end" fill="#cdd6f4" font-size="11">Streaming protocol vocab</text>
+<text x="232" y="265" text-anchor="end" fill="#cdd6f4" font-size="11">Pre-call cultural research</text>
 <rect x="240" y="254" width="400" height="14" rx="3" fill="#313244"/>
-<rect x="240" y="254" width="320" height="14" rx="3" fill="#e8a838" fill-opacity="0.65"/>
-<text x="650" y="265" fill="#e8a838" font-size="11" font-weight="600">4/5</text>
-<text x="686" y="265" fill="#e8a838" font-size="9" fill-opacity="0.7">MED</text>
+<rect x="240" y="254" width="240" height="14" rx="3" fill="#e8a838" fill-opacity="0.65"/>
+<text x="650" y="265" fill="#e8a838" font-size="11" font-weight="600">3/5</text>
+<text x="692" y="265" fill="#e8a838" font-size="9" fill-opacity="0.7">MED</text>
 </svg>
-<div style="font-size:10px;color:#45475a;margin-top:8px">Updated manually after each practice session. HIGH = blocks offers at target level. Level 1=unknown → 5=fluent under pressure.</div>
+<div style="font-size:10px;color:#45475a;margin-top:8px">Updated after each debrief. HIGH = blocks offers at target level. 1=unknown → 5=fluent under pressure.</div>
 </div>
 
 <h2>Stage Board</h2>
 <div style="display:flex;gap:10px;flex-wrap:wrap">
-<div style="flex:1;min-width:140px;background:#1a1d24;border-radius:8px;padding:12px"><div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#4a9eca;margin-bottom:10px;font-weight:600">Applied (3)</div><div style="background:#22262f;border-radius:6px;padding:10px 12px;margin-bottom:6px;border-left:3px solid #4a9eca"><div style="font-size:13px;font-weight:600;color:#cdd6f4">DataStack Inc</div><div style="font-size:11px;color:#6c7086;margin-top:3px;line-height:1.4">Applied Jun 5 — awaiting response</div></div><div style="background:#22262f;border-radius:6px;padding:10px 12px;margin-bottom:6px;border-left:3px solid #4a9eca"><div style="font-size:13px;font-weight:600;color:#cdd6f4">StreamBase</div><div style="font-size:11px;color:#6c7086;margin-top:3px;line-height:1.4">Applied Jun 8 via referral</div></div><div style="background:#22262f;border-radius:6px;padding:10px 12px;margin-bottom:6px;border-left:3px solid #4a9eca"><div style="font-size:13px;font-weight:600;color:#cdd6f4">OpenLLM Co</div><div style="font-size:11px;color:#6c7086;margin-top:3px;line-height:1.4">Applied Jun 10 — tailored resume sent</div></div></div>
-<div style="flex:1;min-width:140px;background:#1a1d24;border-radius:8px;padding:12px"><div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#e8a838;margin-bottom:10px;font-weight:600">Replied (0)</div><div style="font-size:11px;color:#45475a;font-style:italic">empty</div></div>
-<div style="flex:1;min-width:140px;background:#1a1d24;border-radius:8px;padding:12px"><div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#a78bfa;margin-bottom:10px;font-weight:600">Screening (2)</div><div style="background:#22262f;border-radius:6px;padding:10px 12px;margin-bottom:6px;border-left:3px solid #a78bfa"><div style="font-size:13px;font-weight:600;color:#cdd6f4">CoreSystems</div><div style="font-size:11px;color:#6c7086;margin-top:3px;line-height:1.4">Recruiter call done → HM intro TBC</div></div><div style="background:#22262f;border-radius:6px;padding:10px 12px;margin-bottom:6px;border-left:3px solid #a78bfa"><div style="font-size:13px;font-weight:600;color:#cdd6f4">InferenceEdge</div><div style="font-size:11px;color:#6c7086;margin-top:3px;line-height:1.4">HM intro confirmed Wed Jun 17 10:00</div></div></div>
-<div style="flex:1;min-width:140px;background:#1a1d24;border-radius:8px;padding:12px"><div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#5bba6f;margin-bottom:10px;font-weight:600">Interviewing (2)</div><div style="background:#22262f;border-radius:6px;padding:10px 12px;margin-bottom:6px;border-left:3px solid #5bba6f"><div style="font-size:13px;font-weight:600;color:#cdd6f4">NovaSystems</div><div style="font-size:11px;color:#6c7086;margin-top:3px;line-height:1.4">System design Thu Jun 12 15:00</div></div><div style="background:#22262f;border-radius:6px;padding:10px 12px;margin-bottom:6px;border-left:3px solid #5bba6f"><div style="font-size:13px;font-weight:600;color:#cdd6f4">VectorLabs</div><div style="font-size:11px;color:#6c7086;margin-top:3px;line-height:1.4">Coding round Sat Jun 14 14:00</div></div></div>
-<div style="flex:1;min-width:140px;background:#1a1d24;border-radius:8px;padding:12px"><div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#f38ba8;margin-bottom:10px;font-weight:600">Final Round (1)</div><div style="background:#22262f;border-radius:6px;padding:10px 12px;margin-bottom:6px;border-left:3px solid #f38ba8"><div style="font-size:13px;font-weight:600;color:#cdd6f4">QuantumAI</div><div style="font-size:11px;color:#6c7086;margin-top:3px;line-height:1.4">Full loop day Fri Jun 19 — confirm format</div></div></div>
-<div style="flex:1;min-width:140px;background:#1a1d24;border-radius:8px;padding:12px"><div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#22c55e;margin-bottom:10px;font-weight:600">Offer (1)</div><div style="background:#22262f;border-radius:6px;padding:10px 12px;margin-bottom:6px;border-left:3px solid #22c55e"><div style="font-size:13px;font-weight:600;color:#cdd6f4">Amplify AI</div><div style="font-size:11px;color:#6c7086;margin-top:3px;line-height:1.4">£450k TC — respond by Jun 25</div></div></div>
+
+<div style="flex:1;min-width:140px;background:#1a1d24;border-radius:8px;padding:12px">
+  <div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#f38ba8;margin-bottom:10px;font-weight:600">This week (3)</div>
+  <div style="background:#22262f;border-radius:6px;padding:10px 12px;margin-bottom:6px;border-left:3px solid #f38ba8"><div style="font-size:13px;font-weight:600;color:#cdd6f4">NovaSystems</div><div style="font-size:11px;color:#6c7086;margin-top:3px;line-height:1.4">C&amp;L round Wed Jun 24 11:00 + full loop Jun 29–30</div></div>
+  <div style="background:#22262f;border-radius:6px;padding:10px 12px;margin-bottom:6px;border-left:3px solid #f38ba8"><div style="font-size:13px;font-weight:600;color:#cdd6f4">VectorLabs</div><div style="font-size:11px;color:#6c7086;margin-top:3px;line-height:1.4">C++ live coding Thu Jun 25 11:00 (2h CoderPad)</div></div>
+  <div style="background:#22262f;border-radius:6px;padding:10px 12px;margin-bottom:6px;border-left:3px solid #f38ba8"><div style="font-size:13px;font-weight:600;color:#cdd6f4">CoreSystems</div><div style="font-size:11px;color:#6c7086;margin-top:3px;line-height:1.4">Technical screen Wed Jun 24 15:00 (warm-up)</div></div>
+</div>
+
+<div style="flex:1;min-width:140px;background:#1a1d24;border-radius:8px;padding:12px">
+  <div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#e8a838;margin-bottom:10px;font-weight:600">Next week (2)</div>
+  <div style="background:#22262f;border-radius:6px;padding:10px 12px;margin-bottom:6px;border-left:3px solid #e8a838"><div style="font-size:13px;font-weight:600;color:#cdd6f4">DataStack Inc</div><div style="font-size:11px;color:#6c7086;margin-top:3px;line-height:1.4">Recruiter screen Wed Jul 1 09:30 (practice round)</div></div>
+  <div style="background:#22262f;border-radius:6px;padding:10px 12px;margin-bottom:6px;border-left:3px solid #e8a838"><div style="font-size:13px;font-weight:600;color:#cdd6f4">InferenceEdge</div><div style="font-size:11px;color:#6c7086;margin-top:3px;line-height:1.4">Coding + system design Thu Jul 2 14:00 (45min)</div></div>
+</div>
+
+<div style="flex:1;min-width:140px;background:#1a1d24;border-radius:8px;padding:12px">
+  <div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#cba6f7;margin-bottom:10px;font-weight:600">Final Round (1)</div>
+  <div style="background:#22262f;border-radius:6px;padding:10px 12px;margin-bottom:6px;border-left:3px solid #cba6f7"><div style="font-size:13px;font-weight:600;color:#cdd6f4">QuantumAI ★</div><div style="font-size:11px;color:#6c7086;margin-top:3px;line-height:1.4">5-round virtual onsite — week of Jul 7 (2 days) — pending date confirm</div></div>
+</div>
+
+<div style="flex:1;min-width:140px;background:#1a1d24;border-radius:8px;padding:12px">
+  <div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#45475a;margin-bottom:10px;font-weight:600">Awaiting date (4)</div>
+  <div style="background:#22262f;border-radius:6px;padding:10px 12px;margin-bottom:6px;border-left:3px solid #45475a"><div style="font-size:13px;font-weight:600;color:#cdd6f4">StreamBase</div><div style="font-size:11px;color:#6c7086;margin-top:3px;line-height:1.4">Loop pending — new date Jul 7+ (rescheduled)</div></div>
+  <div style="background:#22262f;border-radius:6px;padding:10px 12px;margin-bottom:6px;border-left:3px solid #45475a"><div style="font-size:13px;font-weight:600;color:#cdd6f4">Amplify AI</div><div style="font-size:11px;color:#6c7086;margin-top:3px;line-height:1.4">Superday pending — Jul 8 or Jul 10 (in-person)</div></div>
+  <div style="background:#22262f;border-radius:6px;padding:10px 12px;margin-bottom:6px;border-left:3px solid #45475a"><div style="font-size:13px;font-weight:600;color:#cdd6f4">OpenLLM Co</div><div style="font-size:11px;color:#6c7086;margin-top:3px;line-height:1.4">Engineering interview pending — Jul 8+ (rescheduled)</div></div>
+  <div style="background:#22262f;border-radius:6px;padding:10px 12px;margin-bottom:6px;border-left:3px solid #45475a"><div style="font-size:13px;font-weight:600;color:#cdd6f4">CommodiCore</div><div style="font-size:11px;color:#6c7086;margin-top:3px;line-height:1.4">Pair programming pending — Jul 7+ (rescheduled)</div></div>
+</div>
+
 </div>
 
 <h2>Company Pipeline</h2>
@@ -220,15 +291,16 @@ tr:last-child td{border-bottom:none}
     <th>Next action</th>
   </tr></thead>
   <tbody>
-<tr><td><strong>NovaSystems</strong></td><td style="color:#f38ba8;white-space:nowrap;font-size:12px">Thu 12 Jun</td><td style="font-size:11px;color:#a6adc8">Recruiter call done → Tech screen passed → System design confirmed Thu Jun 12 15:00</td><td style="font-size:12px;color:#6c7086">Prep distributed caching architecture; attend Thu 12 Jun 15:00 BST</td></tr>
-<tr><td><strong>VectorLabs</strong></td><td style="color:#f38ba8;white-space:nowrap;font-size:12px">Sat 14 Jun</td><td style="font-size:11px;color:#a6adc8">HM call done → Coding round confirmed Sat Jun 14 14:00 (CoderPad, 2h)</td><td style="font-size:12px;color:#6c7086">Prep graph algorithms + LLM serving; attend Sat 14 Jun 14:00 BST</td></tr>
-<tr><td><strong>InferenceEdge</strong></td><td style="color:#a6adc8;white-space:nowrap;font-size:12px">Wed 17 Jun</td><td style="font-size:11px;color:#a6adc8">Recruiter call done → HM intro confirmed Wed Jun 17 10:00 BST</td><td style="font-size:12px;color:#6c7086">Attend HM intro Wed Jun 17 10:00 BST</td></tr>
-<tr><td><strong>QuantumAI</strong></td><td style="color:#a6adc8;white-space:nowrap;font-size:12px">Fri 19 Jun</td><td style="font-size:11px;color:#a6adc8">Rounds 1–3 complete → Advanced to final loop day Fri Jun 19</td><td style="font-size:12px;color:#6c7086">Confirm loop format; prep system design + behavioural stories</td></tr>
-<tr><td><strong>Amplify AI</strong></td><td style="color:#a6adc8;white-space:nowrap;font-size:12px">TBC</td><td style="font-size:11px;color:#a6adc8">Verbal offer received Jun 9 — £450k TC (base £280k + equity + bonus)</td><td style="font-size:12px;color:#6c7086">Review offer; negotiate equity cliff; respond by Jun 25</td></tr>
-<tr><td><strong>CoreSystems</strong></td><td style="color:#a6adc8;white-space:nowrap;font-size:12px">TBC</td><td style="font-size:11px;color:#a6adc8">Recruiter call done Jun 7 → HM intro scheduling in progress</td><td style="font-size:12px;color:#6c7086">Await HM intro scheduling email</td></tr>
-<tr><td><strong>DataStack Inc</strong></td><td style="color:#a6adc8;white-space:nowrap;font-size:12px">TBC</td><td style="font-size:11px;color:#a6adc8">Applied Jun 5 via LinkedIn — Staff Infrastructure Engineer</td><td style="font-size:12px;color:#6c7086">Await response; follow up Jun 16 if no reply</td></tr>
-<tr><td><strong>StreamBase</strong></td><td style="color:#a6adc8;white-space:nowrap;font-size:12px">TBC</td><td style="font-size:11px;color:#a6adc8">Referral confirmed Jun 7 — applying formally via careers page</td><td style="font-size:12px;color:#6c7086">Apply at careers page + confirm referral with contact</td></tr>
-<tr><td><strong>OpenLLM Co</strong></td><td style="color:#a6adc8;white-space:nowrap;font-size:12px">TBC</td><td style="font-size:11px;color:#a6adc8">Applied Jun 10 — tailored resume, AI infra focus</td><td style="font-size:12px;color:#6c7086">Await response</td></tr>
+<tr><td><strong>NovaSystems</strong></td><td style="color:#f38ba8;white-space:nowrap;font-size:12px">Jun 24 / 29–30</td><td style="font-size:11px;color:#a6adc8">C&amp;L round confirmed Jun 24; full loop confirmed Jun 29–30 (4 rounds — design × 2 + coding × 2)</td><td style="font-size:12px;color:#6c7086">Attend C&amp;L Wed 11:00; then loop Mon–Tue next week</td></tr>
+<tr><td><strong>VectorLabs</strong></td><td style="color:#f38ba8;white-space:nowrap;font-size:12px">Thu 25 Jun</td><td style="font-size:11px;color:#a6adc8">C++ live coding 2h confirmed Thu Jun 25 11:00 (CoderPad)</td><td style="font-size:12px;color:#6c7086">Light warm-up morning of; no new material; attend 11:00</td></tr>
+<tr><td><strong>QuantumAI</strong></td><td style="color:#a6adc8;white-space:nowrap;font-size:12px">Jul 7–8 TBC</td><td style="font-size:11px;color:#a6adc8">Advanced to 5-round virtual onsite — week of Jul 7 proposed; pending scheduling confirm</td><td style="font-size:12px;color:#6c7086">Sprint prep Jul 3–6; send Tech Fit deck before loop starts</td></tr>
+<tr><td><strong>InferenceEdge</strong></td><td style="color:#a6adc8;white-space:nowrap;font-size:12px">Thu 2 Jul</td><td style="font-size:11px;color:#a6adc8">Coding + system design 45min confirmed Thu Jul 2 14:00</td><td style="font-size:12px;color:#6c7086">Prep: why-this-company 2-min, C++ warm-up morning of</td></tr>
+<tr><td><strong>CoreSystems</strong></td><td style="color:#a6adc8;white-space:nowrap;font-size:12px">Wed 24 Jun</td><td style="font-size:11px;color:#a6adc8">Technical screen confirmed Wed Jun 24 15:00 (warm-up level)</td><td style="font-size:12px;color:#6c7086">Show up fresh; treat as practice</td></tr>
+<tr><td><strong>DataStack Inc</strong></td><td style="color:#a6adc8;white-space:nowrap;font-size:12px">Wed 1 Jul</td><td style="font-size:11px;color:#a6adc8">Recruiter screen confirmed Wed Jul 1 09:30 (relocation role — practice only)</td><td style="font-size:12px;color:#6c7086">Send updated CV before screen; just show up</td></tr>
+<tr><td><strong>StreamBase</strong></td><td style="color:#a6adc8;white-space:nowrap;font-size:12px">Jul 7+ TBC</td><td style="font-size:11px;color:#a6adc8">Loop rescheduled — awaiting new date Jul 7+ from coordinator</td><td style="font-size:12px;color:#6c7086">Await date confirmation email</td></tr>
+<tr><td><strong>Amplify AI</strong></td><td style="color:#a6adc8;white-space:nowrap;font-size:12px">Jul 8/10 TBC</td><td style="font-size:11px;color:#a6adc8">Superday rescheduled — new date Jul 8 or Jul 10 (in-person, Tue/Thu only)</td><td style="font-size:12px;color:#6c7086">Await scheduling confirmation from recruiter</td></tr>
+<tr><td><strong>OpenLLM Co</strong></td><td style="color:#a6adc8;white-space:nowrap;font-size:12px">Jul 8+ TBC</td><td style="font-size:11px;color:#a6adc8">Engineering interview rescheduled — coordinator back Jul 8, new date TBC</td><td style="font-size:12px;color:#6c7086">Follow up with recruiter after Jul 8</td></tr>
+<tr><td><strong>CommodiCore</strong></td><td style="color:#a6adc8;white-space:nowrap;font-size:12px">Jul 7+ TBC</td><td style="font-size:11px;color:#a6adc8">Pair programming rescheduled — new date Jul 7+ (1h session)</td><td style="font-size:12px;color:#6c7086">Await date confirmation from recruiter</td></div></td></tr>
   </tbody>
 </table>
 </body>

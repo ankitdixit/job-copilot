@@ -14,6 +14,13 @@ Usage:
     python3 tools/send_email.py --to addr@example.com --subject "Subject" --body "Body text"
     python3 tools/send_email.py --to addr@example.com --subject "Subject" --body-file /path/to/body.txt
     python3 tools/send_email.py --to addr@example.com --subject "Subject" --body "..." --cc other@example.com
+
+Reply to an existing thread (threads correctly in Gmail):
+    python3 tools/send_email.py --to addr@example.com --subject "Re: ..." --body "..." \\
+        --thread-id <gmail-thread-id> --in-reply-to <gmail-message-id>
+
+Get thread-id and message-id from the Gmail API or MCP search/get_thread output.
+Set EMAIL_FOOTER env var to append a P.S. line to every outbound email (optional).
 """
 
 import argparse
@@ -34,6 +41,7 @@ SCOPES = ["https://www.googleapis.com/auth/gmail.send"]
 CREDENTIALS_FILE = Path(os.getenv("GMAIL_CREDENTIALS_FILE", "~/.config/job-copilot/credentials.json")).expanduser()
 TOKEN_FILE = Path(os.getenv("GMAIL_TOKEN_FILE", "~/.config/job-copilot/token_send.json")).expanduser()
 GMAIL_USER = os.getenv("GMAIL_USER", "me")
+EMAIL_FOOTER = os.getenv("EMAIL_FOOTER", "")
 
 
 def get_service():
@@ -55,7 +63,14 @@ def get_service():
     return build("gmail", "v1", credentials=creds)
 
 
-def send_email(to: str, subject: str, body: str, cc: Optional[str] = None) -> None:
+def send_email(
+    to: str,
+    subject: str,
+    body: str,
+    cc: Optional[str] = None,
+    thread_id: Optional[str] = None,
+    in_reply_to: Optional[str] = None,
+) -> None:
     service = get_service()
     msg = MIMEMultipart()
     msg["From"] = GMAIL_USER
@@ -63,10 +78,17 @@ def send_email(to: str, subject: str, body: str, cc: Optional[str] = None) -> No
     msg["Subject"] = subject
     if cc:
         msg["Cc"] = cc
-    msg.attach(MIMEText(body, "plain"))
+    if in_reply_to:
+        msg["In-Reply-To"] = in_reply_to
+        msg["References"] = in_reply_to
+    msg.attach(MIMEText(body + EMAIL_FOOTER, "plain"))
     raw = base64.urlsafe_b64encode(msg.as_bytes()).decode()
-    service.users().messages().send(userId="me", body={"raw": raw}).execute()
-    print(f"Sent: '{subject}' → {to}" + (f" (cc: {cc})" if cc else ""))
+    payload: dict = {"raw": raw}
+    if thread_id:
+        payload["threadId"] = thread_id
+    service.users().messages().send(userId="me", body=payload).execute()
+    reply_info = f" [reply in thread {thread_id}]" if thread_id else ""
+    print(f"Sent: '{subject}' → {to}" + (f" (cc: {cc})" if cc else "") + reply_info)
 
 
 def main() -> None:
@@ -76,6 +98,8 @@ def main() -> None:
     parser.add_argument("--body", help="Email body text")
     parser.add_argument("--body-file", help="Path to file containing email body")
     parser.add_argument("--cc", default=None)
+    parser.add_argument("--thread-id", default=None, help="Gmail thread ID — places reply in existing thread")
+    parser.add_argument("--in-reply-to", default=None, help="Gmail message ID of the message being replied to")
     args = parser.parse_args()
 
     if args.body_file:
@@ -86,7 +110,7 @@ def main() -> None:
         print("Error: provide --body or --body-file", file=sys.stderr)
         sys.exit(1)
 
-    send_email(args.to, args.subject, body, args.cc)
+    send_email(args.to, args.subject, body, args.cc, args.thread_id, args.in_reply_to)
 
 
 if __name__ == "__main__":

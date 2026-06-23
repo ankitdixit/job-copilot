@@ -236,6 +236,26 @@ python3 tools/send_email.py \
   --body-file /tmp/outreach.txt
 ```
 
+### Reply in an existing Gmail thread
+
+Pass `--thread-id` and `--in-reply-to` to place the reply inside an existing conversation (so it threads correctly in Gmail rather than starting a new one). Get both IDs from the Gmail API or from `mcp__gmail get_thread` output.
+
+```bash
+python3 tools/send_email.py \
+  --to name@company.com \
+  --subject "Re: Staff Engineer — interested in [Company]" \
+  --body-file /tmp/followup.txt \
+  --thread-id <gmail-thread-id> \
+  --in-reply-to <gmail-message-id>
+```
+
+| Flag | Description |
+|------|-------------|
+| `--thread-id` | Gmail thread ID — places the message inside an existing thread |
+| `--in-reply-to` | Gmail message ID of the message being replied to (sets `In-Reply-To` / `References` headers) |
+
+**Optional footer:** Set `EMAIL_FOOTER` in your `.env` to append a fixed line to every outbound email (e.g. a P.S. or a note about your availability). Leave it empty (the default) to send with no footer.
+
 ### View dashboard
 
 Open `dashboard/index.html` in your browser. It reads from `pipeline.md` and shows stage, last action, and days since contact for each company.
