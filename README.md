@@ -77,7 +77,11 @@ Interview ends
 
 **[→ Live demo](https://ankitdixit.github.io/job-copilot/dashboard/demo.html)** — sample pipeline with fake data, no setup needed.
 
-The dashboard auto-regenerates from your local files every 6h. It shows:
+![Dashboard — pipeline, Gantt, and comp chart](docs/dashboard-overview.png)
+
+![Dashboard — prep levels and stage board](docs/dashboard-prep.png)
+
+The dashboard auto-regenerates from your local files every hour. It shows:
 - **Goal box** — your comp target and what you'll accept
 - **14-day Gantt** — every interview bar, today marker, weekend shading
 - **Comp vs role fit scatter** — which companies are genuine targets vs practice
