@@ -1,6 +1,25 @@
 # Job Copilot
 
-An AI-assisted job search framework built for senior engineers. Seed it with target companies, and it handles outreach, tracking, follow-up, and dashboarding — so you spend your time preparing for interviews, not managing a spreadsheet.
+An AI-assisted job search system for senior engineers. Automates the grind — outreach, tracking, follow-up, scheduling, prep tracking — so you spend your time preparing for interviews, not managing a spreadsheet.
+
+**[→ Live demo](https://ankitdixit.github.io/job-copilot/dashboard/demo.html)** — sample pipeline, no setup needed.
+
+![Dashboard — pipeline, Gantt, and comp chart](docs/dashboard-overview.png)
+
+![Dashboard — prep levels and stage board](docs/dashboard-prep.png)
+
+### What it does
+
+- **Automated outreach** — browser agent finds the right contact at any company, drafts a personalised email, sends via your own Gmail account after you approve
+- **Threaded follow-up** — flags stale outreach after N days, drafts a follow-up in the same Gmail thread
+- **Pipeline tracking** — every company in one markdown file; stage, next action, contact, and date updated automatically
+- **Interview scheduling support** — 14-day Gantt view of confirmed rounds; alerts for upcoming interviews pulled from your task list
+- **Comp vs fit visualisation** — scatter plot of every active company by total comp and role fit so you can see at a glance which are genuine targets vs. practice rounds
+- **Prep gap tracking** — every interview debrief extracts gaps with severity (HIGH/MED) and evidence; exercise tasks spawned automatically
+- **Prep level chart** — readiness per topic on a 1–5 scale, updated after each practice session, sorted worst-first so the weak spots are impossible to ignore
+- **Stage board** — kanban columns (Applied → Screening → Interviewing → Final Round → Offer) regenerated hourly from your pipeline
+- **Background automation** — hourly Gmail scan via local LLM (Qwen, zero API cost); dashboard regenerates without you touching anything
+- **Local-first, no lock-in** — plain markdown files, your own Gmail account, runs on LM Studio for free or any OpenAI-compatible endpoint
 
 ---
 
@@ -72,22 +91,6 @@ Interview ends
 ```
 
 ---
-
-## Dashboard preview
-
-**[→ Live demo](https://ankitdixit.github.io/job-copilot/dashboard/demo.html)** — sample pipeline with fake data, no setup needed.
-
-![Dashboard — pipeline, Gantt, and comp chart](docs/dashboard-overview.png)
-
-![Dashboard — prep levels and stage board](docs/dashboard-prep.png)
-
-The dashboard auto-regenerates from your local files every hour. It shows:
-- **Goal box** — your comp target and what you'll accept
-- **14-day Gantt** — every interview bar, today marker, weekend shading
-- **Comp vs role fit scatter** — which companies are genuine targets vs practice
-- **Prep level chart** — readiness per topic (HIGH/MED severity, 1–5 scale), updated after each practice session
-- **Stage board** — kanban: Applied → Screening → Interviewing → Final Round → Offer
-- **Pipeline table** — every company, next action, date
 
 ## What's working today (v0.1)
 
