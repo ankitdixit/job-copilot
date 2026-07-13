@@ -1,0 +1,87 @@
+name: Gap report
+description: A gap discovered in the codebase (Stream A) or in interview performance (Stream B)
+title: "[gap] "
+labels: ["gap"]
+body:
+  - type: dropdown
+    id: stream
+    attributes:
+      label: Stream
+      description: Where was this gap discovered?
+      options:
+        - "A — code/portability (job-copilot repo)"
+        - "B — interview intelligence (gaps.md / debrief)"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: gap_type
+    attributes:
+      label: Gap type
+      options:
+        - gap:code
+        - gap:doc
+        - gap:mac
+        - gap:security
+        - gap:feature
+        - gap:interview
+        - gap:behavioral
+        - gap:technical
+        - gap:prep
+    validations:
+      required: true
+
+  - type: dropdown
+    id: engine
+    attributes:
+      label: Implementation engine
+      description: Which engine should execute the fix?
+      options:
+        - "script — deterministic bash/python, 0 tokens"
+        - "qwen — NL→action (form fill, email draft, triage), 0 tokens"
+        - "claude — analysis, complex code, multi-file reasoning"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - HIGH — blocks usage or reveals personal data
+        - MED — degrades reliability or portability
+        - LOW — polish or convenience
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What is the gap? Be specific — file path and line number if code, interview moment if behavioral.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: "Stream A: what broke or what is missing. Stream B: exact interview moment — e.g. 'xAI screen: described concept without using the term; interviewer had to guide'"
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: How do we know this gap is closed?
+    validations:
+      required: true
+
+  - type: textarea
+    id: fix_plan
+    attributes:
+      label: Fix plan
+      description: One concrete action to close this gap.
+    validations:
+      required: false

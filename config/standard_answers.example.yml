@@ -30,6 +30,14 @@ cover_letter: >
   I would welcome the opportunity to discuss how my background maps to what you
   are building. Resume attached.
 
+# ─── Outreach email bullets (used in outreach_agent.py paragraph 2) ─────────
+# Two bullet points summarising your most relevant experience for outreach emails.
+# Keep concise — the LLM will use these to write 2 sentences.
+outreach_bullets: |
+  - [YOUR_COMPANY_1]: [your most impressive project] ([scale or impact metric])
+  - [YOUR_COMPANY_2]: [second example with measurable outcome]
+  - [X] years building [your domain]
+
 # ─── Behavioural / STAR answers ──────────────────────────────────────────────
 biggest_achievement: >
   <YOUR_STORY_HERE: Situation → Task → Action → Result. Include specific numbers
