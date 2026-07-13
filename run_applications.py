@@ -8,6 +8,8 @@ Usage:
     python3 run_applications.py --outreach cloudera        # find contact + draft email
     python3 run_applications.py --outreach cloudera --send # find + draft + prompt to send
     python3 run_applications.py --run-all                  # apply/outreach all pending targets
+    python3 run_applications.py --debrief mistral --transcript transcripts/2026-07-13-mistral.md
+    python3 run_applications.py --debrief xai --no-transcript  # manual input mode
 
 Routing logic (set in company yml):
     apply_method: ats       → apply_agent.py (Qwen fills ATS form)
@@ -86,6 +88,10 @@ if __name__ == "__main__":
     parser.add_argument("--confirm", action="store_true", help="Actually submit (default: dry run)")
     parser.add_argument("--send", action="store_true", help="Prompt to send outreach email")
     parser.add_argument("--run-all", action="store_true", help="Run all approved targets (dry-run ATS, prompt-to-send outreach)")
+    parser.add_argument("--debrief", metavar="COMPANY", help="Run interview debrief agent for a company")
+    parser.add_argument("--transcript", metavar="FILE", help="Transcript file for --debrief")
+    parser.add_argument("--no-transcript", action="store_true", help="Manual debrief input (no transcript file)")
+    parser.add_argument("--dry-run", action="store_true", help="Show debrief output without writing files")
 
     args = parser.parse_args()
     configs = load_company_configs()
@@ -150,5 +156,23 @@ if __name__ == "__main__":
 
         print("\n[orchestrator] All targets processed.")
         sys.exit(0)
+
+    if args.debrief:
+        cmd = [
+            "python3", str(PROJECT_ROOT / "agents" / "debrief_agent.py"),
+            "--company", args.debrief,
+        ]
+        if args.transcript:
+            cmd += ["--transcript", args.transcript]
+        elif args.no_transcript:
+            cmd.append("--no-transcript")
+        else:
+            print("--debrief requires --transcript <file> or --no-transcript", file=sys.stderr)
+            sys.exit(1)
+        if args.dry_run:
+            cmd.append("--dry-run")
+        code, output = run_agent(cmd)
+        print(output)
+        sys.exit(code)
 
     parser.print_help()

@@ -1,0 +1,45 @@
+# tools/tasks.example.yml — copy to tools/tasks.yml and add your own tasks
+# Run with: python3 tools/task_runner.py --list
+#           python3 tools/task_runner.py --run-all
+#           python3 tools/task_runner.py --run-id <id>
+#
+# engine: script  → runs `command` in shell; marks done on exit 0
+# engine: qwen    → posts `prompt` to LM Studio; marks done on success
+# engine: claude  → prints `prompt` for manual paste; exits 2 (not marked done)
+
+tasks:
+  - id: smoke-test
+    title: "Verify fresh-clone setup"
+    engine: script
+    command: "bash scripts/smoke_test.sh"
+    status: open
+
+  - id: generate-dashboard
+    title: "Regenerate local HTML dashboard"
+    engine: script
+    command: "python3 tools/generate_dashboard.py --pipeline pipeline.md --tasks tasks.md --output dashboard/index.html"
+    status: open
+
+  - id: draft-outreach-example
+    title: "Draft outreach email for example company"
+    engine: qwen
+    prompt: |
+      Draft a 4-paragraph outreach email for a Staff Engineer (Distributed Systems) role
+      at ExampleCorp. Tone: direct, specific, no filler. Max 200 words.
+      Output format:
+        Subject: <subject line>
+        Body:
+        <email body>
+    temperature: 0.3
+    status: open
+
+  - id: gap-analysis-repo
+    title: "Scan repo for code gaps and create GitHub Issues"
+    engine: claude
+    prompt: |
+      Read agents/, tools/, and config/ in the job-copilot repo.
+      Identify: hardcoded personal values, missing error handling at config boundaries,
+      duplicated logic, README claims not backed by code.
+      For each gap: create a GitHub Issue with title, description, acceptance criteria,
+      engine label (gap:code), and severity (HIGH/MED/LOW).
+    status: open
