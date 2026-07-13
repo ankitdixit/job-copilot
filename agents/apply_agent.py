@@ -35,7 +35,8 @@ import yaml
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from agents.browser_agent import CompatibleChatOpenAI as LMStudioChatOpenAI, check_lm_studio_context
+from agents.browser_agent import check_lm_studio_context
+from agents.llm_factory import get_llm
 from browser_use import Agent, BrowserProfile, BrowserSession
 
 CONFIG_DIR = PROJECT_ROOT / "config"
@@ -149,18 +150,7 @@ async def run_apply(company: str, role_index: int, confirm: bool = False) -> str
             "DO_SUBMIT — click the final submit/send application button when the form is complete."
         )
 
-    llm = LMStudioChatOpenAI(
-        base_url="http://localhost:1234/v1",
-        api_key="lm-studio",
-        model="qwen/qwen3.6-27b",
-        temperature=0.0,
-        max_completion_tokens=2048,
-        timeout=300,
-        dont_force_structured_output=True,
-        add_schema_to_system_prompt=True,
-        remove_min_items_from_schema=True,
-        remove_defaults_from_schema=True,
-    )
+    llm = get_llm(temperature=0.0)
 
     # Load session cookies if available
     session_file = Path(company_cfg.get("session_cookie_file", "").replace("~", str(Path.home())))

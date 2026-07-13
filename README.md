@@ -123,6 +123,7 @@ Interview ends
 job-copilot/
 ├── agents/
 │   ├── browser_agent.py     # AI browser automation (browser-use + local/cloud LLM)
+│   ├── llm_factory.py       # Single LLM construction point (reads LLM_BASE_URL/MODEL/API_KEY env)
 │   ├── apply_agent.py       # ATS form filler (Qwen-powered; dry-run by default)
 │   └── outreach_agent.py    # Finds recruiter contact, drafts outreach email
 ├── tools/
@@ -138,6 +139,9 @@ job-copilot/
 │   └── companies/
 │       └── example_company.yml       # → copy to <company>.yml for each target
 ├── run_applications.py      # Orchestrator: reads config/targets.yml, runs agents
+├── Makefile                 # make setup / config / smoke / dashboard / list
+├── scripts/
+│   └── smoke_test.sh        # Fresh-clone verification (no LM Studio or Gmail required)
 ├── dashboard/
 │   └── index.html           # Visual pipeline dashboard (open as local file)
 ├── automation/
@@ -156,6 +160,20 @@ job-copilot/
 ---
 
 ## Quickstart
+
+```bash
+git clone https://github.com/ankitdixit/job-copilot
+cd job-copilot
+make setup      # creates venv, installs deps, installs playwright
+make config     # copies example configs (skips files that already exist)
+# Edit config/profile.yml with your details
+make smoke      # verify the clone is working end-to-end
+```
+
+`make smoke` checks Python version, pyyaml, playwright, config files, and all tool CLIs. It does **not** require LM Studio or Gmail credentials — those come later.
+
+<details>
+<summary>Manual setup (without make)</summary>
 
 ### 1. Clone and install
 
@@ -181,6 +199,8 @@ Edit `config/profile.yml` with your name, email, LinkedIn, resume path, and comp
 
 Edit `config/standard_answers.yml` with your STAR stories, cover letter, and logistics answers.
 All personal configs are gitignored — they never end up in the repo.
+
+</details>
 
 ### 3. Gmail setup (one-time)
 
@@ -306,12 +326,14 @@ Edit `pipeline.md` directly after each action. Columns: Company, Role, Stage, Ne
 | OpenAI GPT-4o | ~$0.01–0.10/task | ~5s/task | Best accuracy, cloud |
 | Anthropic Claude | ~$0.01–0.10/task | ~5s/task | Best reasoning, cloud |
 
-To use a cloud provider, set in `.env`:
+To use a cloud provider, set environment variables (or add to `.env`):
 ```bash
-LLM_BASE_URL=https://api.openai.com/v1
-LLM_MODEL=gpt-4o
-LLM_API_KEY=sk-your-key-here
+export LLM_BASE_URL=https://api.openai.com/v1
+export LLM_MODEL=gpt-4o
+export LLM_API_KEY=sk-your-key-here
 ```
+
+All agents read these via `agents/llm_factory.py` — no code changes needed to switch providers.
 
 ---
 
