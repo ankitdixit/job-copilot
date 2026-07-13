@@ -1,0 +1,15 @@
+# config/targets.example.yml — copy to config/targets.yml and add your actual targets
+# config/targets.yml is gitignored — this example file is safe to commit
+#
+# Each entry maps a company config (config/companies/<company>.yml) to an automation action.
+# role: index into the roles[] list in the company config (0-based)
+# method: ats | outreach | both
+
+targets:
+  - company: example_company   # must match config/companies/example_company.yml
+    role: 0                    # role index (0-based)
+    method: outreach           # ats | outreach | both
+
+  - company: another_company
+    role: 1
+    method: ats

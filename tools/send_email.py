@@ -25,8 +25,11 @@ Set EMAIL_FOOTER env var to append a P.S. line to every outbound email (optional
 
 import argparse
 import base64
+import mimetypes
 import os
 import sys
+from email import encoders
+from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from pathlib import Path
@@ -70,6 +73,7 @@ def send_email(
     cc: Optional[str] = None,
     thread_id: Optional[str] = None,
     in_reply_to: Optional[str] = None,
+    attachment: Optional[str] = None,
 ) -> None:
     service = get_service()
     msg = MIMEMultipart()
@@ -82,6 +86,16 @@ def send_email(
         msg["In-Reply-To"] = in_reply_to
         msg["References"] = in_reply_to
     msg.attach(MIMEText(body + EMAIL_FOOTER, "plain"))
+    if attachment:
+        path = Path(attachment)
+        mime_type, _ = mimetypes.guess_type(str(path))
+        main_type, sub_type = (mime_type or "application/octet-stream").split("/", 1)
+        with open(path, "rb") as f:
+            part = MIMEBase(main_type, sub_type)
+            part.set_payload(f.read())
+        encoders.encode_base64(part)
+        part.add_header("Content-Disposition", "attachment", filename=path.name)
+        msg.attach(part)
     raw = base64.urlsafe_b64encode(msg.as_bytes()).decode()
     payload: dict = {"raw": raw}
     if thread_id:
@@ -100,6 +114,7 @@ def main() -> None:
     parser.add_argument("--cc", default=None)
     parser.add_argument("--thread-id", default=None, help="Gmail thread ID — places reply in existing thread")
     parser.add_argument("--in-reply-to", default=None, help="Gmail message ID of the message being replied to")
+    parser.add_argument("--attachment", default=None, metavar="PATH", help="Path to file to attach")
     args = parser.parse_args()
 
     if args.body_file:
@@ -110,7 +125,7 @@ def main() -> None:
         print("Error: provide --body or --body-file", file=sys.stderr)
         sys.exit(1)
 
-    send_email(args.to, args.subject, body, args.cc, args.thread_id, args.in_reply_to)
+    send_email(args.to, args.subject, body, args.cc, args.thread_id, args.in_reply_to, args.attachment)
 
 
 if __name__ == "__main__":

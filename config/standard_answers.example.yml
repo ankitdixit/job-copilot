@@ -1,0 +1,65 @@
+# config/standard_answers.example.yml — copy to config/standard_answers.yml and fill in your stories
+# config/standard_answers.yml is gitignored — this example file is safe to commit
+#
+# Instructions for Qwen: keep the substance, replace [COMPANY] and [ROLE] with actual values.
+# Do NOT invent facts. Do NOT change numbers. Do NOT add skills not listed.
+
+# ─── Short-form fields ────────────────────────────────────────────────────────
+
+years_experience: "<e.g. 10>"
+current_title: "Staff Engineer"   # use your actual title
+highest_education: "<e.g. Bachelor's in Computer Science>"
+
+# ─── Why this company (2-3 sentences, Qwen adapts) ───────────────────────────
+why_company: >
+  I am drawn to [COMPANY] because of its position at the forefront of [DOMAIN —
+  e.g. AI infrastructure / data platform / ML systems]. Having spent [X] years
+  building large-scale distributed systems at [PREV_COMPANY_1] and [PREV_COMPANY_2],
+  I want to work where the infrastructure problems are genuinely hard and the scale
+  is real. [COMPANY]'s [SPECIFIC_PRODUCT] is exactly the kind of system I want to
+  own and evolve.
+
+# ─── Cover letter (Qwen fills [ROLE], [COMPANY], [DOMAIN]) ──────────────────
+cover_letter: >
+  I am applying for the [ROLE] position at [COMPANY]. <YOUR_STORY_HERE: 2-3 sentences
+  on your most relevant experience — focus on scale, impact, and what you built.>
+
+  At [COMPANY], the [ROLE] sits at the intersection of [DOMAIN]. <YOUR_STORY_HERE:
+  1-2 sentences on why this specific role fits your trajectory.>
+
+  I would welcome the opportunity to discuss how my background maps to what you
+  are building. Resume attached.
+
+# ─── Behavioural / STAR answers ──────────────────────────────────────────────
+biggest_achievement: >
+  <YOUR_STORY_HERE: Situation → Task → Action → Result. Include specific numbers
+  (scale, latency improvement, team size, timeline). 4-6 sentences.>
+
+leadership_example: >
+  <YOUR_STORY_HERE: A time you led a team or drove a cross-functional initiative.
+  Include team size, the challenge, what you changed, and measurable outcome.
+  4-6 sentences.>
+
+handling_ambiguity: >
+  <YOUR_STORY_HERE: A time you turned a vague brief into a concrete plan.
+  What was the ambiguity? What data did you gather? What decision did you make?
+  4-6 sentences.>
+
+# ─── Logistics ───────────────────────────────────────────────────────────────
+notice_period_answer: >
+  My notice period is [NOTICE_PERIOD]. I am flexible on start date and can discuss
+  if an earlier or later start works better.
+
+salary_answer: >
+  I am targeting <YOUR_TARGET_RANGE> base depending on total compensation structure,
+  plus equity. I am open to a conversation about the full package.
+
+remote_preference_answer: >
+  I am flexible — comfortable with fully remote, hybrid, or in-office.
+  Happy to work in whatever way suits the team.
+
+work_authorisation_answer: >
+  <YOUR_WORK_AUTHORISATION_STATUS — e.g. "I have the right to work in the UK without sponsorship.">
+
+referral_source_answer: >
+  I found this role through my research into leading companies in this space.

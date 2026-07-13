@@ -6,3 +6,10 @@ __pycache__/
 !pipeline.md
 *.log
 .DS_Store
+
+# Personal config — gitignored; use config/*.example.yml as templates
+config/profile.yml
+config/standard_answers.yml
+config/targets.yml
+config/companies/*.yml
+!config/companies/example_company.yml

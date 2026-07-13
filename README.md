@@ -122,18 +122,29 @@ Interview ends
 ```
 job-copilot/
 ├── agents/
-│   └── browser_agent.py     # AI browser automation (browser-use + local/cloud LLM)
+│   ├── browser_agent.py     # AI browser automation (browser-use + local/cloud LLM)
+│   ├── apply_agent.py       # ATS form filler (Qwen-powered; dry-run by default)
+│   └── outreach_agent.py    # Finds recruiter contact, drafts outreach email
 ├── tools/
-│   ├── send_email.py        # Gmail API sender (OAuth2)
+│   ├── send_email.py        # Gmail API sender (OAuth2, --attachment support)
+│   ├── email_triage.py      # Classify emails via local Qwen (standalone, no personal config)
+│   ├── generate_dashboard.py# pipeline.md + tasks.md → HTML dashboard (standalone)
+│   ├── session_store.py     # Browser session persistence (pickle-based)
 │   └── health_check.py      # Monitors token validity and automation health
+├── config/
+│   ├── profile.example.yml           # → copy to profile.yml and fill in your details
+│   ├── standard_answers.example.yml  # → copy to standard_answers.yml
+│   ├── targets.example.yml           # → copy to targets.yml (your automation queue)
+│   └── companies/
+│       └── example_company.yml       # → copy to <company>.yml for each target
+├── run_applications.py      # Orchestrator: reads config/targets.yml, runs agents
 ├── dashboard/
 │   └── index.html           # Visual pipeline dashboard (open as local file)
 ├── automation/
 │   ├── com.jobcopilot.health.plist   # macOS LaunchAgent (runs health_check every 2h)
 │   └── job-copilot-health.service   # Linux systemd service
 ├── pipeline.md              # Your opportunity tracker (edit this directly)
-├── requirements.txt
-└── setup.sh                 # One-command setup
+└── requirements.txt
 ```
 
 **LLM layer:** The browser agent works with any OpenAI-compatible endpoint. Run it with a local model (LM Studio, Ollama) for zero ongoing cost, or point it at OpenAI/Anthropic for speed and accuracy. Qwen3 27B works well locally for navigation tasks.
@@ -158,23 +169,18 @@ playwright install chromium
 
 ### 2. Configure
 
-Copy the example config and fill in your details:
+Copy the example configs and fill in your details:
 
 ```bash
-cp .env.example .env
+cp config/profile.example.yml config/profile.yml
+cp config/standard_answers.example.yml config/standard_answers.yml
+cp config/targets.example.yml config/targets.yml
 ```
 
-Edit `.env`:
+Edit `config/profile.yml` with your name, email, LinkedIn, resume path, and comp expectations.
 
-```bash
-# Your email address
-GMAIL_USER=you@gmail.com
-
-# LLM — local (LM Studio) or cloud (OpenAI)
-LLM_BASE_URL=http://localhost:1234/v1
-LLM_MODEL=qwen3-27b
-LLM_API_KEY=lm-studio
-```
+Edit `config/standard_answers.yml` with your STAR stories, cover letter, and logistics answers.
+All personal configs are gitignored — they never end up in the repo.
 
 ### 3. Gmail setup (one-time)
 
@@ -218,6 +224,24 @@ systemctl --user enable --now job-copilot-health.service
 source .venv/bin/activate
 python3 agents/browser_agent.py "go to mistral.ai/careers and list all open engineering roles with titles and links"
 ```
+
+### Run the automation queue
+
+```bash
+# List your targets (from config/targets.yml)
+python3 run_applications.py --list
+
+# Run outreach for a single company
+python3 run_applications.py --outreach example_company --role 0
+
+# Run ATS apply (dry-run by default; --confirm to actually submit)
+python3 run_applications.py --apply example_company --role 0
+
+# Run all targets in your queue
+python3 run_applications.py --run-all
+```
+
+Edit `config/targets.yml` to add or remove companies from your automation queue.
 
 ### Draft and send outreach
 
@@ -336,18 +360,7 @@ Each new gap spawns a task in `tasks.md`:
 
 **Step 4 — Track prep level**
 
-After each practice session, update `PREP_LEVELS` in `vault_update.py`. The dashboard generates a bar chart showing readiness per topic (1=unknown → 5=fluent under pressure), sorted HIGH-severity gaps first.
-
-```python
-PREP_LEVELS = {
-    'C++ smart pointers + IPC':   (2, 'HIGH'),  # ← update this after practice
-    'Algorithms / Coding':        (3, 'HIGH'),
-    'System design narrative':    (3, 'HIGH'),
-    # ...
-}
-```
-
-The chart makes the current weak spots impossible to ignore.
+After each practice session, update your prep level tracking. The dashboard generates a bar chart showing readiness per topic (1=unknown → 5=fluent under pressure), sorted HIGH-severity gaps first.
 
 ### Second Brain integration
 
@@ -359,9 +372,19 @@ The full system runs inside an Obsidian vault with:
 - `debriefs/` — structured notes per interview round
 - `plans/` — weekly plans anchored to interview dates
 
-The vault auto-update script (`vault_update.py`) reads from all of these and regenerates `schedule.html` every 6h: a local dashboard showing the full picture — pipeline stages, prep level chart, Gantt timeline — without any cloud dependency.
+**Full orchestration (`vault_update.py`):** The complete personal setup runs a macOS LaunchAgent that scans Gmail every hour, triages emails via a local Qwen model (using `tools/email_triage.py`), extracts tasks, and regenerates a local HTML dashboard (using `tools/generate_dashboard.py`) — all without any cloud dependency or ongoing API cost.
 
-Extracting this into a standalone module (no Obsidian required) is on the v0.3 roadmap.
+The personal scheduler and vault configuration are not in this repo, but both tools work standalone:
+
+```bash
+# Triage a single email via local Qwen
+python3 tools/email_triage.py --subject "Interview invite" --body "Hi, we'd like..." --url http://127.0.0.1:1234
+
+# Generate dashboard from your pipeline + tasks files
+python3 tools/generate_dashboard.py --pipeline pipeline.md --tasks tasks.md --output dashboard/schedule.html
+```
+
+Run `--help` on either tool to see all options. LM Studio must be running with a Qwen model loaded for `email_triage.py`.
 
 ## Design principles
 

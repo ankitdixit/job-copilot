@@ -1,0 +1,23 @@
+# config/profile.example.yml — copy to config/profile.yml and fill in your details
+# config/profile.yml is gitignored — this example file is safe to commit
+
+candidate:
+  name: <YOUR_FULL_NAME>
+  email: <YOUR_EMAIL>
+  location: <YOUR_CITY, COUNTRY>
+  phone: "<YOUR_PHONE>"
+  linkedin: <YOUR_LINKEDIN_URL>           # e.g. https://linkedin.com/in/yourname
+  github: <YOUR_GITHUB_URL>               # e.g. https://github.com/yourhandle
+  notice_period: "<e.g. 2 months or Immediate>"
+  right_to_work: "<e.g. UK citizen, no sponsorship required>"
+  willing_to_relocate: true               # true | false
+  preferred_work_mode: flexible           # hybrid | remote | onsite | flexible
+
+resume:
+  default: <ABSOLUTE_PATH_TO_YOUR_DEFAULT_RESUME.pdf>
+
+compensation:
+  target_base_gbp: <YOUR_TARGET_SALARY>
+  minimum_base_gbp: <YOUR_MINIMUM_SALARY>
+  equity: true                            # true | false
+  note: "<Your note on comp expectations>"
