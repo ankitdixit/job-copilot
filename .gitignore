@@ -7,6 +7,9 @@ __pycache__/
 *.log
 .DS_Store
 
+# Generated prep plans (personal) and the local question-bank checkout
+prep-plans/
+
 # Personal config — gitignored; use config/*.example.yml as templates
 config/profile.yml
 config/standard_answers.yml

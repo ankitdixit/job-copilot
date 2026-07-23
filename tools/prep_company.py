@@ -1,0 +1,222 @@
+#!/usr/bin/env python3
+"""tools/prep_company.py — build a prep plan for a company from the private question bank.
+
+Given a company, this tool:
+  1. Ensures a local clone of the interview question-bank repo (default:
+     dark-interview-questions), cloning or pulling it IF the running user has
+     read access. Access is gated via `gh`/`git` — no access prints a clear
+     message and exits cleanly (never crashes).
+  2. Locates that company's questions in the bank: `1point3acres/<Company>/`
+     (scraped bank) and any curated top-level `<Company>/` folders.
+  3. Writes a prep-plan markdown (question checklist grouped by category) and
+     prints a summary.
+
+This is the portable version of the Second Brain `prep-company` flow: point it
+at the shared repo and it works for anyone the owner has granted access to.
+
+Usage:
+    # Owner / any collaborator with read access to the bank repo
+    python3 tools/prep_company.py --company databricks
+    python3 tools/prep_company.py --company google_deepmind --out prep-plans/
+
+    # Point at an existing local checkout instead of cloning (e.g. for testing)
+    python3 tools/prep_company.py --company xai --bank-dir /path/to/dark-interview-questions
+
+    # Use a different bank repo
+    python3 tools/prep_company.py --company stripe --bank-repo owner/repo
+"""
+
+import argparse
+import re
+import subprocess
+import sys
+from datetime import date
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).parent.parent
+
+DEFAULT_BANK_REPO = "ankitdixit/dark-interview-questions"
+DEFAULT_BANK_DIR = Path.home() / ".job-copilot" / "dark-interview-questions"
+
+# Where scraped question banks live inside the repo, relative to its root.
+SCRAPED_SUBDIR = "1point3acres"
+
+CATEGORY_ORDER = ["Coding", "System Design", "Behavioral", "Other"]
+
+
+# ── Bank repo: clone / pull, gated on access ─────────────────────────────────
+
+def _run(cmd: list[str], cwd: Path | None = None) -> subprocess.CompletedProcess:
+    return subprocess.run(cmd, capture_output=True, text=True, cwd=str(cwd) if cwd else None)
+
+
+def has_repo_access(repo: str) -> bool:
+    """True if the running user can read `repo`. Uses gh; falls back to a git ls-remote."""
+    gh = _run(["gh", "repo", "view", repo, "--json", "name"])
+    if gh.returncode == 0:
+        return True
+    # gh unavailable or not authed — try an unauthenticated/https ls-remote
+    ls = _run(["git", "ls-remote", f"https://github.com/{repo}.git", "HEAD"])
+    return ls.returncode == 0
+
+
+def ensure_bank(repo: str, bank_dir: Path) -> Path | None:
+    """Ensure a readable local checkout of the bank. Returns its path, or None if no access."""
+    if bank_dir.exists() and (bank_dir / ".git").exists():
+        print(f"[prep] Updating bank at {bank_dir} ...")
+        pull = _run(["git", "pull", "--ff-only"], cwd=bank_dir)
+        if pull.returncode != 0:
+            print(f"[prep] warning: git pull failed ({pull.stderr.strip()}); using existing checkout.",
+                  file=sys.stderr)
+        return bank_dir
+
+    if not has_repo_access(repo):
+        print(
+            f"\n[prep] No read access to '{repo}'.\n"
+            f"       Ask the repo owner to add you as a collaborator "
+            f"(GitHub → repo → Settings → Collaborators), then re-run.\n"
+            f"       Or pass --bank-dir to point at a local checkout you already have.",
+            file=sys.stderr,
+        )
+        return None
+
+    print(f"[prep] Cloning {repo} → {bank_dir} ...")
+    bank_dir.parent.mkdir(parents=True, exist_ok=True)
+    clone = _run(["gh", "repo", "clone", repo, str(bank_dir)])
+    if clone.returncode != 0:
+        clone = _run(["git", "clone", f"https://github.com/{repo}.git", str(bank_dir)])
+    if clone.returncode != 0:
+        print(f"[prep] clone failed: {clone.stderr.strip()}", file=sys.stderr)
+        return None
+    return bank_dir
+
+
+# ── Locate + parse a company's questions ─────────────────────────────────────
+
+def _norm(name: str) -> str:
+    return re.sub(r"[^a-z0-9]", "", name.lower())
+
+
+def find_company_dirs(bank_dir: Path, company: str) -> list[tuple[str, Path]]:
+    """Return [(source_label, questions_dir)] for every folder in the bank matching `company`."""
+    target = _norm(company)
+    hits: list[tuple[str, Path]] = []
+
+    search_roots = [
+        ("bank", bank_dir / SCRAPED_SUBDIR),   # scraped 1point3acres bank
+        ("curated", bank_dir),                 # curated top-level company folders
+    ]
+    for label, root in search_roots:
+        if not root.is_dir():
+            continue
+        for child in sorted(root.iterdir()):
+            if not child.is_dir() or child.name.startswith("."):
+                continue
+            if _norm(child.name) == target:
+                qdir = child / "Questions"
+                qdir = qdir if qdir.is_dir() else child
+                hits.append((f"{label}:{child.name}", qdir))
+    return hits
+
+
+def parse_question(md_path: Path) -> dict:
+    """Extract title + category from a scraped/curated question markdown file."""
+    title = md_path.stem
+    category = "Other"
+    try:
+        text = md_path.read_text(errors="replace")
+    except Exception:
+        return {"title": title, "category": category, "file": md_path}
+
+    m = re.search(r"^#\s+(.+)$", text, re.MULTILINE)
+    if m:
+        title = m.group(1).strip()
+    tags = re.search(r"^\*\*Tags:\*\*\s*(.+)$", text, re.MULTILINE)
+    if tags:
+        for cat in CATEGORY_ORDER:
+            if re.search(rf"`{re.escape(cat)}`", tags.group(1)):
+                category = cat
+                break
+    return {"title": title, "category": category, "file": md_path}
+
+
+def collect_questions(qdir: Path) -> list[dict]:
+    if not qdir.is_dir():
+        return []
+    return [parse_question(p) for p in sorted(qdir.glob("*.md"))]
+
+
+# ── Build the prep plan ──────────────────────────────────────────────────────
+
+def build_plan(company: str, sources: list[tuple[str, list[dict]]]) -> str:
+    total = sum(len(qs) for _, qs in sources)
+    lines = [
+        f"# Prep plan — {company}",
+        "",
+        f"Generated {date.today().isoformat()} · {total} questions from the shared bank.",
+        "",
+        "> Drill rule: pick the highest-severity category, do one timed rep out loud, "
+        "check against the fix rule, then move on. Reading ≠ a rep.",
+        "",
+    ]
+    for source_label, qs in sources:
+        if not qs:
+            continue
+        lines.append(f"## Source: {source_label} ({len(qs)})")
+        by_cat: dict[str, list[dict]] = {c: [] for c in CATEGORY_ORDER}
+        for q in qs:
+            by_cat.setdefault(q["category"], []).append(q)
+        for cat in CATEGORY_ORDER:
+            items = by_cat.get(cat) or []
+            if not items:
+                continue
+            lines.append(f"\n### {cat} ({len(items)})")
+            for q in items:
+                lines.append(f"- [ ] {q['title']}")
+        lines.append("")
+    return "\n".join(lines)
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Build a company prep plan from the shared question bank")
+    parser.add_argument("--company", required=True, help="Company name (e.g. databricks, google_deepmind)")
+    parser.add_argument("--bank-repo", default=DEFAULT_BANK_REPO, help="Question-bank GitHub repo (owner/name)")
+    parser.add_argument("--bank-dir", type=Path, default=DEFAULT_BANK_DIR,
+                        help="Local checkout of the bank (cloned/pulled if it's the default managed path)")
+    parser.add_argument("--out", type=Path, default=PROJECT_ROOT / "prep-plans",
+                        help="Directory to write the prep plan into")
+    parser.add_argument("--stdout", action="store_true", help="Print the plan instead of writing a file")
+    args = parser.parse_args()
+
+    # A user-supplied --bank-dir is used as-is; the managed default is cloned/pulled.
+    if args.bank_dir == DEFAULT_BANK_DIR:
+        bank = ensure_bank(args.bank_repo, args.bank_dir)
+        if bank is None:
+            sys.exit(1)
+    else:
+        bank = args.bank_dir
+        if not bank.is_dir():
+            print(f"[prep] --bank-dir not found: {bank}", file=sys.stderr)
+            sys.exit(1)
+
+    dirs = find_company_dirs(bank, args.company)
+    if not dirs:
+        print(f"[prep] No questions found for '{args.company}' in the bank.\n"
+              f"       Check the company name, or the bank may not cover it yet.", file=sys.stderr)
+        sys.exit(1)
+
+    sources = [(label, collect_questions(qdir)) for label, qdir in dirs]
+    total = sum(len(qs) for _, qs in sources)
+    plan = build_plan(args.company, sources)
+
+    if args.stdout:
+        print(plan)
+    else:
+        args.out.mkdir(parents=True, exist_ok=True)
+        out_path = args.out / f"{_norm(args.company)}-{date.today().isoformat()}.md"
+        out_path.write_text(plan)
+        print(f"[prep] {total} questions across {len(dirs)} source(s) → {out_path}")
+
+
+if __name__ == "__main__":
+    main()

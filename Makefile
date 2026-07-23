@@ -1,11 +1,17 @@
-.PHONY: setup config smoke dashboard list clean
+.PHONY: setup config smoke dashboard list prep clean
+
+# Pick a Python >= 3.10 (the repo requires it). Override: make setup PYTHON=/path/to/python
+PYTHON ?= $(shell command -v python3.12 || command -v python3.11 || command -v python3.10 || command -v python3)
+# For run targets, prefer the project venv if it exists.
+PY_RUN := $(if $(wildcard .venv/bin/python3),.venv/bin/python3,$(PYTHON))
 
 setup:
-	python3 -m venv .venv
+	$(PYTHON) -m venv .venv
+	.venv/bin/pip install --upgrade pip
 	.venv/bin/pip install -r requirements.txt
 	.venv/bin/playwright install chromium
 	@echo ""
-	@echo "Setup complete. Run: make config"
+	@echo "Setup complete (using $(PYTHON)). Run: make config"
 
 config:
 	@[ -f config/profile.yml ] \
@@ -24,13 +30,19 @@ smoke:
 	bash scripts/smoke_test.sh
 
 dashboard:
-	python3 tools/generate_dashboard.py \
+	$(PY_RUN) tools/generate_dashboard.py \
 		--pipeline pipeline.md \
 		--tasks tasks.md \
 		--output dashboard/index.html
 
 list:
-	python3 run_applications.py --list
+	$(PY_RUN) run_applications.py --list
+
+# Build a drill plan for a company from the shared question-bank repo.
+# Usage: make prep COMPANY=databricks
+prep:
+	@[ -n "$(COMPANY)" ] || { echo "Usage: make prep COMPANY=<name>  (e.g. make prep COMPANY=databricks)"; exit 1; }
+	$(PY_RUN) tools/prep_company.py --company "$(COMPANY)"
 
 clean:
-	rm -rf .venv __pycache__ agents/__pycache__ tools/__pycache__ *.log
+	rm -rf .venv __pycache__ agents/__pycache__ tools/__pycache__ prep-plans *.log

@@ -12,9 +12,14 @@ REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 ok()   { echo "  ✓ $1"; PASS=$((PASS+1)); }
 fail() { echo "  ✗ $1"; FAIL=$((FAIL+1)); }
 
-# Detect python3 — prefer venv if active
-PYTHON="${VIRTUAL_ENV:+$VIRTUAL_ENV/bin/python3}"
-PYTHON="${PYTHON:-python3}"
+# Detect python3 — prefer an active venv, then the repo-local .venv, then PATH
+if [ -n "${VIRTUAL_ENV:-}" ] && [ -x "$VIRTUAL_ENV/bin/python3" ]; then
+  PYTHON="$VIRTUAL_ENV/bin/python3"
+elif [ -x "$REPO_ROOT/.venv/bin/python3" ]; then
+  PYTHON="$REPO_ROOT/.venv/bin/python3"
+else
+  PYTHON="python3"
+fi
 
 echo ""
 echo "=== Job Copilot smoke test ==="
@@ -24,7 +29,7 @@ echo ""
 
 # ── 1. Python version ────────────────────────────────────────────────────────
 echo "[ Environment ]"
-PY_VER=$($PYTHON -c "import sys; print(sys.version_info.major * 10 + sys.version_info.minor)")
+PY_VER=$($PYTHON -c "import sys; print(sys.version_info.major * 100 + sys.version_info.minor)")
 if [ "$PY_VER" -ge 310 ]; then
   ok "python3 >= 3.10 ($($PYTHON --version 2>&1))"
 else
@@ -86,12 +91,17 @@ LEAK_PATTERNS=(
 )
 LEAK_FOUND=0
 for pattern in "${LEAK_PATTERNS[@]}"; do
-  # Only check tracked files; skip gitignored and .git
+  # Only check tracked files; skip gitignored, .git, and the scanners that
+  # legitimately contain these regex patterns as string literals.
   if git -C "$REPO_ROOT" grep -Il -P "$pattern" -- \
       ':!config/profile.yml' \
       ':!config/standard_answers.yml' \
       ':!config/targets.yml' \
       ':!config/companies/*.yml' \
+      ':!scripts/smoke_test.sh' \
+      ':!tools/gap_scan.py' \
+      ':!*.example.yml' \
+      ':!.env.example' \
       ':!*.log' \
       ':!.git' 2>/dev/null | grep -q .; then
     fail "potential personal data found (pattern: $pattern)"

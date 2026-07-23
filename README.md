@@ -104,6 +104,7 @@ Interview ends
 | Background automation | ✅ | LaunchAgent (macOS) / systemd (Linux) for periodic checks |
 | Interview debrief | ✅ | Reads meeting transcripts, creates structured debrief notes, updates pipeline |
 | Prep notes + cheat sheets | ✅ | Per-company prep folders, topic cheat sheets, gap tracker |
+| Company prep plans | ✅ | `make prep COMPANY=x` pulls that company's questions from a shared question-bank repo and generates a grouped drill checklist |
 
 ## Planned
 
@@ -111,7 +112,6 @@ Interview ends
 |---------|--------|
 | Auto job discovery | v0.2 — periodic scan of target company career pages |
 | Follow-up automation | v0.2 — flag stale outreach, draft follow-ups |
-| Standalone prep module | v0.3 — extract from Obsidian vault into portable format |
 | Cloud deployment | v0.3 — Dockerfile + setup guide, run on a €4/mo VPS |
 | Application assist | v0.3 — navigate to job application, hand off to Simplify/autofill |
 
@@ -130,6 +130,7 @@ job-copilot/
 │   ├── send_email.py        # Gmail API sender (OAuth2, --attachment support)
 │   ├── email_triage.py      # Classify emails via local Qwen (standalone, no personal config)
 │   ├── generate_dashboard.py# pipeline.md + tasks.md → HTML dashboard (standalone)
+│   ├── prep_company.py       # Pulls a company's questions from the shared bank → drill plan
 │   ├── session_store.py     # Browser session persistence (pickle-based)
 │   └── health_check.py      # Monitors token validity and automation health
 ├── config/
@@ -212,7 +213,7 @@ You need a Google Cloud project to send email via Gmail API.
 4. Download the JSON → save as `~/.config/job-copilot/credentials.json`
 5. Run the auth flow once:
    ```bash
-   python3 tools/send_email.py --to you@gmail.com --subject "test" --body "hello"
+   python3 tools/send_email.py --to you@example.com --subject "test" --body "hello"
    ```
    A browser window opens → click Allow → token saved to `~/.config/job-copilot/token_send.json`
 
@@ -315,6 +316,18 @@ Open `dashboard/index.html` in your browser. It reads from `pipeline.md` and sho
 
 Edit `pipeline.md` directly after each action. Columns: Company, Role, Stage, Next Action, Contact, Date Added.
 
+### Prep for an interview (question bank)
+
+Generate a drill checklist for a company from a shared question-bank repo:
+
+```bash
+make prep COMPANY=databricks
+# or directly:
+python3 tools/prep_company.py --company databricks
+```
+
+`prep_company.py` clones/pulls the bank repo (default `ankitdixit/dark-interview-questions`) **only if you have read access**, finds that company's questions, and writes a category-grouped drill checklist to `prep-plans/<company>-<date>.md`. No access → it tells you to ask the owner for a collaborator invite. Use `--bank-dir` to point at a local checkout (skips cloning) or `--bank-repo owner/name` to use your own bank.
+
 ---
 
 ## LLM options
@@ -407,6 +420,17 @@ python3 tools/generate_dashboard.py --pipeline pipeline.md --tasks tasks.md --ou
 ```
 
 Run `--help` on either tool to see all options. LM Studio must be running with a Qwen model loaded for `email_triage.py`.
+
+## Gotchas & operational notes
+
+The non-obvious things that make this actually work — learned the hard way:
+
+- **Python 3.10+ is required.** If your default `python3` is older, point setup at a newer one: `make setup PYTHON=python3.12`. `make setup` auto-prefers a 3.10+ interpreter if one is on PATH.
+- **Local LLM context window is the #1 gotcha.** LM Studio defaults to a 4096-token context, which the browser agent overflows immediately on real careers pages (the DOM is large). **Set the model's context to 32K** in LM Studio *before* running `browser_agent.py` — otherwise it silently truncates and behaves erratically. Qwen3 27B at 32K is the sweet spot for local navigation.
+- **LM Studio endpoint:** the local tools expect an OpenAI-compatible server at `http://127.0.0.1:1234` with a model **loaded** (not just downloaded). `email_triage.py` and the apply agent fail/no-op if nothing is loaded.
+- **Gmail first-run auth:** `send_email.py` opens a browser consent screen the first time and caches an OAuth token under `~/.config`. If it ever fails with `invalid_grant: Token has been expired or revoked`, delete the cached token file and re-run once to re-authorize. Run it with the venv's Python so the Google client libs are present.
+- **The apply agent never clicks the final Submit — by design.** ATS flows gate submission behind 2FA and diversity/EEO questions that shouldn't be auto-answered. The agent fills everything and stops at the last step for you to review and submit; `--confirm` is required even to reach that point (dry-run is the default).
+- **Browser sessions persist** via `session_store.py` (pickled cookies) so you don't re-login every run. Delete the session file if a site starts rejecting the stored session.
 
 ## Design principles
 
