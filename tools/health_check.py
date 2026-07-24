@@ -81,14 +81,17 @@ def check_gmail_token() -> str:
         return "expired"
 
 
-def check_lm_studio() -> str:
-    """Returns 'ok' or 'down'. Retries up to LM_STUDIO_RETRIES times."""
+def check_lm_studio() -> tuple:
+    """Returns ('ok'|'down', loaded_model_id|None). Retries up to LM_STUDIO_RETRIES times."""
     for attempt in range(1, LM_STUDIO_RETRIES + 1):
         try:
-            req = urllib.request.urlopen(LM_STUDIO_URL, timeout=5)
-            if req.status == 200:
-                log("OK   lm_studio")
-                return "ok"
+            with urllib.request.urlopen(LM_STUDIO_URL, timeout=5) as resp:
+                if resp.status == 200:
+                    data = json.loads(resp.read())
+                    models = data.get("data", [])
+                    loaded = models[0]["id"] if models else None
+                    log(f"OK   lm_studio  loaded={loaded}")
+                    return "ok", loaded
         except Exception:
             pass
         if attempt < LM_STUDIO_RETRIES:
@@ -96,7 +99,7 @@ def check_lm_studio() -> str:
 
     notify("Job Copilot", "LM Studio is not responding — email triage will skip until it restarts")
     log(f"FAIL lm_studio: no response after {LM_STUDIO_RETRIES} attempts")
-    return "down"
+    return "down", None
 
 
 def main() -> None:
@@ -106,11 +109,12 @@ def main() -> None:
 
     log("--- health check start ---")
     gmail_status = check_gmail_token()
-    lm_status = check_lm_studio()
+    lm_status, loaded_model = check_lm_studio()
 
     result = {
         "gmail": gmail_status,
         "lm_studio": lm_status,
+        "loaded_model": loaded_model,
         "timestamp": datetime.utcnow().isoformat() + "Z",
     }
 

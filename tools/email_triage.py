@@ -52,15 +52,23 @@ def triage_email(
     """
     prompt = f"Subject: {subject}\n\nBody:\n{body[:2000]}"
 
+    is_qwen3 = "qwen3" in model.lower()
+    messages = [
+        {"role": "system", "content": SYSTEM_PROMPT},
+        {"role": "user", "content": prompt},
+    ]
+    # Prefill the assistant turn with "{" — forces Qwen3 to continue generating JSON
+    # directly without opening a <think> block. Bypasses thinking mode reliably since
+    # LM Studio ignores the thinking:{type:disabled} API parameter.
+    if is_qwen3:
+        messages.append({"role": "assistant", "content": "{"})
+
     payload = json.dumps(
         {
             "model": model,
-            "messages": [
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": prompt},
-            ],
+            "messages": messages,
             "temperature": 0.1,
-            "max_tokens": 256,
+            "max_tokens": 512,  # 256 was too low for Qwen3 thinking to complete
         }
     ).encode()
 
@@ -72,27 +80,35 @@ def triage_email(
     )
 
     try:
-        with urllib.request.urlopen(req, timeout=30) as resp:
+        with urllib.request.urlopen(req, timeout=60) as resp:
             data = json.loads(resp.read())
     except urllib.error.URLError as e:
         raise RuntimeError(f"LM Studio unreachable at {lm_studio_url}: {e}") from e
 
-    content = data["choices"][0]["message"]["content"].strip()
+    msg = data["choices"][0]["message"]
+    # Qwen3 may route CoT to reasoning_content and leave content empty
+    content = (msg.get("content") or "").strip()
+    if not content and msg.get("reasoning_content"):
+        # Fallback: find last JSON object in the reasoning text
+        r = msg["reasoning_content"]
+        end = r.rfind("}")
+        if end != -1:
+            content = r[r.rfind("{", 0, end) : end + 1]
 
-    # Strip XML thinking tags if present (Qwen3 sometimes includes <think>...</think>)
-    if "<think>" in content and "</think>" in content:
-        content = content[content.rfind("</think>") + 8 :].strip()
+    # Restore prefill char if the model continued from "{" without including it
+    if is_qwen3 and content and not content.startswith("{"):
+        content = "{" + content
 
-    # Strip markdown code fences if present
+    # Strip markdown fences and <think> blocks (belt-and-suspenders)
+    content = re.sub(r"<think>.*?</think>", "", content, flags=re.DOTALL).strip()
     content = re.sub(r"^```(?:json)?\s*", "", content)
     content = re.sub(r"\s*```$", "", content)
 
+    # raw_decode stops at first valid JSON object, ignoring any trailing text
     try:
-        return json.loads(content)
+        obj, _ = json.JSONDecoder().raw_decode(content)
+        return obj
     except json.JSONDecodeError:
-        m = re.search(r"\{[^{}]+\}", content, re.DOTALL)
-        if m:
-            return json.loads(m.group())
         return {
             "action": "informational",
             "priority": "low",
