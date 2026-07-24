@@ -27,9 +27,12 @@ Usage:
 """
 
 import argparse
+import json
+import os
 import re
 import subprocess
 import sys
+import urllib.request
 from datetime import date
 from pathlib import Path
 
@@ -177,6 +180,29 @@ def build_plan(company: str, sources: list[tuple[str, list[dict]]]) -> str:
     return "\n".join(lines)
 
 
+def _resolve_llm() -> dict | None:
+    """Pick the LLM for the web fallback: local LM Studio if it's running, else a
+    configured cloud LLM (LLM_BASE_URL/LLM_MODEL/LLM_API_KEY). None if neither is available."""
+    # 1. Prefer local LM Studio if it's up with a usable chat model.
+    try:
+        with urllib.request.urlopen("http://127.0.0.1:1234/v1/models", timeout=3) as r:
+            models = [m["id"] for m in json.loads(r.read()).get("data", [])]
+        chat = [m for m in models if "embed" not in m.lower()]
+        qwen = [m for m in chat if "qwen" in m.lower()]
+        # Browsing wants a general/instruct model, not a code model.
+        model = (next((m for m in qwen if "coder" not in m.lower()), None)
+                 or (qwen[0] if qwen else (chat[0] if chat else None)))
+        if model:
+            return {"LLM_BASE_URL": "http://localhost:1234/v1", "LLM_MODEL": model,
+                    "LLM_API_KEY": "lm-studio", "_which": f"local LM Studio ({model})"}
+    except Exception:
+        pass
+    # 2. Otherwise use whatever model is configured via env (cloud or remote).
+    if os.getenv("LLM_API_KEY") and os.getenv("LLM_BASE_URL"):
+        return {"_which": f"configured LLM ({os.getenv('LLM_MODEL', 'default')})"}  # inherit env as-is
+    return None
+
+
 def web_fallback(company: str, out: Path, timeout: int = 240) -> bool:
     """Best-effort: search the web for the company's questions via the browser agent.
 
@@ -194,10 +220,18 @@ def web_fallback(company: str, out: Path, timeout: int = 240) -> bool:
         f"List every specific technical interview question or problem you find as a markdown bullet list, "
         f"grouped under Coding / System Design / Behavioral where possible. Output only the list."
     )
-    print(f"[prep] Searching the web via the browser agent (up to {timeout}s; needs LM Studio)...")
+    llm = _resolve_llm()
+    if llm is None:
+        print("[prep] No local LM Studio running and no cloud LLM configured for the web fallback.\n"
+              "       Start LM Studio with a model loaded, or set LLM_BASE_URL / LLM_MODEL / LLM_API_KEY\n"
+              "       for a cloud provider (OpenAI/Anthropic/etc.).", file=sys.stderr)
+        return False
+    env = os.environ.copy()
+    env.update({k: v for k, v in llm.items() if not k.startswith("_")})
+    print(f"[prep] Searching the web via the browser agent using {llm['_which']} (up to {timeout}s)...")
     proc = subprocess.run(
         [sys.executable, str(agent), "--max-runtime", str(timeout), task],
-        capture_output=True, text=True,
+        capture_output=True, text=True, env=env,
     )
     body = (proc.stdout or "").strip()
     if proc.returncode != 0 or not body:
