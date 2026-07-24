@@ -177,6 +177,46 @@ def build_plan(company: str, sources: list[tuple[str, list[dict]]]) -> str:
     return "\n".join(lines)
 
 
+def web_fallback(company: str, out: Path, timeout: int = 240) -> bool:
+    """Best-effort: search the web for the company's questions via the browser agent.
+
+    Used when the shared bank isn't accessible or doesn't cover the company. Needs an
+    LLM endpoint (LM Studio) + browser-use, which the browser agent already wires up.
+    Shelled out (not imported) so this tool stays dependency-light when the bank works.
+    """
+    agent = PROJECT_ROOT / "agents" / "browser_agent.py"
+    if not agent.exists():
+        print("[prep] web fallback unavailable (agents/browser_agent.py missing).", file=sys.stderr)
+        return False
+    task = (
+        f"Search the web for '{company} software engineer interview questions'. "
+        f"Open 2-3 of the most relevant results (Glassdoor, LeetCode discuss, engineering blogs, 1point3acres). "
+        f"List every specific technical interview question or problem you find as a markdown bullet list, "
+        f"grouped under Coding / System Design / Behavioral where possible. Output only the list."
+    )
+    print(f"[prep] Searching the web via the browser agent (up to {timeout}s; needs LM Studio)...")
+    proc = subprocess.run(
+        [sys.executable, str(agent), "--max-runtime", str(timeout), task],
+        capture_output=True, text=True,
+    )
+    body = (proc.stdout or "").strip()
+    if proc.returncode != 0 or not body:
+        err = ((proc.stderr or "").strip().splitlines() or ["no output"])[-1]
+        print(f"[prep] web fallback failed: {err[:200]}\n"
+              f"       (needs LM Studio running with a model loaded, and browser-use installed.)",
+              file=sys.stderr)
+        return False
+    out.mkdir(parents=True, exist_ok=True)
+    out_path = out / f"{_norm(company)}-web-{date.today().isoformat()}.md"
+    out_path.write_text(
+        f"# Prep plan (web-sourced) — {company}\n\n"
+        f"Generated {date.today().isoformat()} via web search — best-effort, verify before relying on it.\n\n"
+        f"{body}\n"
+    )
+    print(f"[prep] web-sourced plan → {out_path}")
+    return True
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Build a company prep plan from the shared question bank")
     parser.add_argument("--company", required=True, help="Company name (e.g. databricks, google_deepmind)")
@@ -186,36 +226,42 @@ def main() -> None:
     parser.add_argument("--out", type=Path, default=PROJECT_ROOT / "prep-plans",
                         help="Directory to write the prep plan into")
     parser.add_argument("--stdout", action="store_true", help="Print the plan instead of writing a file")
+    parser.add_argument("--web", action="store_true",
+                        help="Skip the bank and search the web for questions (needs LM Studio + browser agent)")
     args = parser.parse_args()
 
-    # A user-supplied --bank-dir is used as-is; the managed default is cloned/pulled.
-    if args.bank_dir == DEFAULT_BANK_DIR:
-        bank = ensure_bank(args.bank_repo, args.bank_dir)
-        if bank is None:
-            sys.exit(1)
-    else:
-        bank = args.bank_dir
-        if not bank.is_dir():
-            print(f"[prep] --bank-dir not found: {bank}", file=sys.stderr)
-            sys.exit(1)
+    # Resolve the bank unless --web forces a web-only run. A user-supplied --bank-dir
+    # is used as-is; the managed default is cloned/pulled (None if no access).
+    bank: Path | None = None
+    if not args.web:
+        if args.bank_dir == DEFAULT_BANK_DIR:
+            bank = ensure_bank(args.bank_repo, args.bank_dir)
+        elif args.bank_dir.is_dir():
+            bank = args.bank_dir
+        else:
+            print(f"[prep] --bank-dir not found: {args.bank_dir}", file=sys.stderr)
 
-    dirs = find_company_dirs(bank, args.company)
-    if not dirs:
-        print(f"[prep] No questions found for '{args.company}' in the bank.\n"
-              f"       Check the company name, or the bank may not cover it yet.", file=sys.stderr)
+    dirs = find_company_dirs(bank, args.company) if bank else []
+
+    if dirs:
+        sources = [(label, collect_questions(qdir)) for label, qdir in dirs]
+        total = sum(len(qs) for _, qs in sources)
+        plan = build_plan(args.company, sources)
+        if args.stdout:
+            print(plan)
+        else:
+            args.out.mkdir(parents=True, exist_ok=True)
+            out_path = args.out / f"{_norm(args.company)}-{date.today().isoformat()}.md"
+            out_path.write_text(plan)
+            print(f"[prep] {total} questions across {len(dirs)} source(s) → {out_path}")
+        return
+
+    # No bank data (no access, not covered, or --web) → best-effort web search.
+    if not args.web:
+        reason = "bank unavailable (no repo access)" if bank is None else f"'{args.company}' not in the bank"
+        print(f"[prep] {reason} — falling back to a web search.", file=sys.stderr)
+    if not web_fallback(args.company, args.out):
         sys.exit(1)
-
-    sources = [(label, collect_questions(qdir)) for label, qdir in dirs]
-    total = sum(len(qs) for _, qs in sources)
-    plan = build_plan(args.company, sources)
-
-    if args.stdout:
-        print(plan)
-    else:
-        args.out.mkdir(parents=True, exist_ok=True)
-        out_path = args.out / f"{_norm(args.company)}-{date.today().isoformat()}.md"
-        out_path.write_text(plan)
-        print(f"[prep] {total} questions across {len(dirs)} source(s) → {out_path}")
 
 
 if __name__ == "__main__":

@@ -7,6 +7,7 @@ Compatible with Qwen3 models — strips thinking tokens and tool-call wrappers a
 Usage:
     python3 agents/browser_agent.py "go to greenhouse.io/databricks and list open backend roles"
     python3 agents/browser_agent.py "find the careers page at mistral.ai and list engineering jobs"
+    python3 agents/browser_agent.py --max-runtime 300 "..."   # hard wall-clock timeout (seconds)
     python3 agents/browser_agent.py --check-context   # verify LM Studio is ready
 
 Environment variables (or set in config.yml):
@@ -109,7 +110,7 @@ class CompatibleChatOpenAI(_BrowserUseChatOpenAI):
         return client
 
 
-async def run(task: str) -> str:
+async def run(task: str, max_runtime: int | None = None) -> str:
     ok, ctx = check_lm_studio_context()
     if not ok:
         print(f"Aborting: context window too small ({ctx} tokens). See warning above.")
@@ -140,7 +141,13 @@ async def run(task: str) -> str:
         message_compaction=True,              # compact old messages (already default)
         include_tool_call_examples=False,     # no few-shot examples (saves ~500 tokens)
     )
-    result = await agent.run()
+    if max_runtime is not None:
+        try:
+            result = await asyncio.wait_for(agent.run(), timeout=max_runtime)
+        except asyncio.TimeoutError:
+            return f"ERROR: max-runtime exceeded ({max_runtime}s)"
+    else:
+        result = await agent.run()
     return str(result)
 
 
@@ -150,10 +157,25 @@ if __name__ == "__main__":
         print(f"Context: {ctx} tokens — {'OK' if ok else 'TOO LOW'} (need ≥{MIN_CONTEXT_TOKENS})")
         sys.exit(0 if ok else 1)
 
-    if len(sys.argv) < 2:
-        print("Usage: python3 agents/browser_agent.py '<task>'")
+    argv = sys.argv[1:]
+    if not argv:
+        print("Usage: python3 agents/browser_agent.py [--max-runtime <seconds>] '<task>'")
         sys.exit(1)
 
-    task = " ".join(sys.argv[1:])
-    output = asyncio.run(run(task))
+    max_runtime = None
+    if "--max-runtime" in argv:
+        i = argv.index("--max-runtime")
+        try:
+            max_runtime = int(argv[i + 1])
+            del argv[i:i + 2]
+        except (IndexError, ValueError):
+            print("Usage: --max-runtime <seconds> (integer)")
+            sys.exit(1)
+
+    if not argv:
+        print("Usage: python3 agents/browser_agent.py [--max-runtime <seconds>] '<task>'")
+        sys.exit(1)
+
+    task = " ".join(argv)
+    output = asyncio.run(run(task, max_runtime=max_runtime))
     print(output)

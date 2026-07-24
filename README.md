@@ -326,7 +326,9 @@ make prep COMPANY=databricks
 python3 tools/prep_company.py --company databricks
 ```
 
-`prep_company.py` clones/pulls the bank repo (default `ankitdixit/dark-interview-questions`) **only if you have read access**, finds that company's questions, and writes a category-grouped drill checklist to `prep-plans/<company>-<date>.md`. No access → it tells you to ask the owner for a collaborator invite. Use `--bank-dir` to point at a local checkout (skips cloning) or `--bank-repo owner/name` to use your own bank.
+`prep_company.py` clones/pulls the bank repo (default `ankitdixit/dark-interview-questions`) **only if you have read access**, finds that company's questions, and writes a category-grouped drill checklist to `prep-plans/<company>-<date>.md`.
+
+**No access, or the company isn't in the bank?** It automatically falls back to a **best-effort web search** via the browser agent (Glassdoor / LeetCode discuss / blogs) and writes what it finds to `prep-plans/<company>-web-<date>.md`. Force web-only with `--web`. The fallback needs LM Studio running with a model loaded (same as the other agents). Use `--bank-dir` to point at a local checkout (skips cloning) or `--bank-repo owner/name` to use your own bank.
 
 ---
 
